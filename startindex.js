@@ -2,7 +2,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-
 const config = require("./src/config");
 const customResponses = require("./src/middlewares/customResponses");
 const logger = require("./src/utilities/logger");
@@ -21,7 +20,7 @@ require("./src/config/mongoose")(app);
 require("./src/app")(app);
 
 app.use((req, res) => {
-    res.notFound();
+    res.notFound()
 });
 
 app.use((err, req, res, next) => {
@@ -47,7 +46,6 @@ app.use(function (req, res, next) {
 
 // list of methods that are supported by the server
     res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
-
     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, X-XSRF-TOKEN');
 
     next();
