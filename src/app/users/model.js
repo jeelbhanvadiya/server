@@ -32,4 +32,4 @@ userSchema.methods.checkPass = function( password ) {
     return this.password === md5( password );
 };
 
-module.exports = mongoose.model( "User", userSchema );
+module.exports = mongoose.model( "users", userSchema );

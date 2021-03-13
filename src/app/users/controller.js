@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
-const Users = mongoose.model("User");
+const Users = mongoose.model("users");
 
 exports.getList = async (req, res) => {
     try {
@@ -37,6 +37,7 @@ exports.create = async (req, res) => {
         });
     }
     const findUser = await Users.findOne({email: req.body.email});
+    console.log(findUser)
     if(findUser && findUser._id){
         return res.send({message: "This user is already exist"});
     }
