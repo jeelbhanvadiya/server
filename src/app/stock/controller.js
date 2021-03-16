@@ -27,6 +27,21 @@ exports.getStock = async (req, res) => {
     }
 };
 
+exports.getSellStock = async (req, res) => {
+    let arrray = [];
+    try {
+        const stock = await Stock.find({});
+        stock.forEach(item => {
+            if(item.sell === true){
+                arrray.push(item)
+            }
+        })
+        res.status(200).send(arrray);
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+    }
+};
+
 exports.updateStock = async (req, res) => {
     try {
         if (req.params.id) {
