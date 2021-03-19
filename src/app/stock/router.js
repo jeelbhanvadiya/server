@@ -9,6 +9,8 @@ router.post( "/create", controller.createStock );
 
 router.get("/get", controller.getStock);
 
+router.get("/getsellstock", controller.getSellStock);
+
 router.put("/update/:id", controller.updateStock);
 
 router.delete("/delete/:id", controller.deleteStock);
