@@ -11,6 +11,8 @@ router.get("/get", controller.getStock);
 
 router.get("/getsellstock", controller.getSellStock);
 
+router.get("/getstockno/:stockno", controller.getStockNoWise);
+
 router.put("/update/:id", controller.updateStock);
 
 router.delete("/delete/:id", controller.deleteStock);

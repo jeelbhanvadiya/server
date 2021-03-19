@@ -42,6 +42,16 @@ exports.getSellStock = async (req, res) => {
     }
 };
 
+exports.getStockNoWise = async (req, res) => {
+    console.log(req.params.stockno)
+    try {
+        const stock = await Stock.findOne({stockNo: req.params.stockno})
+        res.status(200).send(stock);
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+    }
+};
+
 exports.updateStock = async (req, res) => {
     try {
         if (req.params.id) {
