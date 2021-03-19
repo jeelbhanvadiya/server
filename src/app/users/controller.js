@@ -107,3 +107,12 @@ exports.forgetPassword = async (req, res) => {
         });
     }
 };
+
+exports.findAllServiceManList = async (req, res) => {
+    const servicemanList = await Users.find({role: 'serviceman'});
+    if(servicemanList && servicemanList.length){
+        return res.send({servicemanList});
+    }else {
+        return res.send({message: "No Service Man found"});
+    }
+};

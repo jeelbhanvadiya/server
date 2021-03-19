@@ -16,4 +16,6 @@ router.put( "/edit-profile", validateToken, controller.edit );
 
 router.post( "/forgot-password", controller.forgetPassword );
 
+router.get( "/getservicemanlist", controller.findAllServiceManList );
+
 module.exports = router;
