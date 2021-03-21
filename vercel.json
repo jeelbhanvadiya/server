@@ -1,0 +1,17 @@
+{
+  "name": "server",
+  "version": 2,
+  "builds": [
+    { "src": "package.json", "use": "@vercel/next" },
+    { "src": "startindex.js", "use": "@vercel/node" }
+  ]
+  "routes": [
+    { "src": "/.*", "dest": "/" }
+  ],
+  "env": {
+    "CONNECTION_STRING": "mongodb+srv://jeelbhanvadiya:mrjay1831301@ecarrenting-h1uct.mongodb.net/client?retryWrites=true&w=majority",
+    "LOG_LEVEL": "debug",
+    "SECRET": "superSuperSecret"
+  },
+  "public": true
+}
