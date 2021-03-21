@@ -13,7 +13,7 @@ const stockSchema = new Schema(
         unitOutdoorNo : {type: Number ,required: true},
         clientPhoneNo : {type: Number ,default : null},
         invoiceNo : {type: String },
-        invoiceDate : {type: String},
+        invoiceDate : {type: Date},
         companyId : {
             type: Schema.ObjectId , ref : "company" ,required : true
         },

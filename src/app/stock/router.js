@@ -17,4 +17,6 @@ router.put("/update/:id", controller.updateStock);
 
 router.delete("/delete/:id", controller.deleteStock);
 
+router.post("/filter", controller.filterStockData);
+
 module.exports = router;

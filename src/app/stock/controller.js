@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const commanFun = require('../../commanFun/index')
 const Stock = mongoose.model("stock");
 
 exports.createStock = async (req, res) => {
@@ -32,7 +32,7 @@ exports.getSellStock = async (req, res) => {
     try {
         const stock = await Stock.find({});
         stock.forEach(item => {
-            if(item.sell === true){
+            if (item.sell === true) {
                 arrray.push(item)
             }
         })
@@ -73,7 +73,92 @@ exports.deleteStock = async (req, res) => {
     try {
         await Stock.deleteOne({_id: req.params.id})
         res.status(200).send("success");
-    } catch(err) {
+    } catch (err) {
+        res.status(422).send({error: "Error in getting course details"});
+    }
+}
+
+exports.filterStockData = async (req, res) => {
+    try {
+        const {value, type} = req.body;
+        let data = [];
+        if (type === "DAY") {
+            data = await Stock.find({invoiceDate: commanFun.getFormatDate(value)})
+        } else if (type === "MONTH") {
+            data = await Stock.aggregate(
+                [
+                    {
+                        $project:
+                            {
+                                month: {$month: '$invoiceDate'},
+                                sell: 1,
+                                clientPhoneNo: 1,
+                                stockNo: 1,
+                                indoorSrNo: 1,
+                                outdoorSrNo: 1,
+                                weight: 1,
+                                unitIndoorNo: 1,
+                                unitOutdoorNo: 1,
+                                invoiceNo: 1,
+                                invoiceDate: 1,
+                                companyId: 1,
+                                billingAddress: 1,
+                            }
+                    },
+                    {
+                        $match: {month: parseInt(value)}
+                    }
+                ])
+        } else if (type === "YEAR") {
+            data = await Stock.aggregate(
+                [
+                    {
+                        $project:
+                            {
+                                year: {$year: '$invoiceDate'},
+                                sell: 1,
+                                clientPhoneNo: 1,
+                                stockNo: 1,
+                                indoorSrNo: 1,
+                                outdoorSrNo: 1,
+                                weight: 1,
+                                unitIndoorNo: 1,
+                                unitOutdoorNo: 1,
+                                invoiceNo: 1,
+                                invoiceDate: 1,
+                                companyId: 1,
+                                billingAddress: 1,
+                            }
+                    },
+                    {
+                        $match: {year: parseInt(value)}
+                    }
+                ])
+        } else if (type === "WEEK") {
+            data = await Stock.aggregate(
+                [
+                    {
+                        $project:
+                            {
+                                week: {$week: '$invoiceDate'},
+                                sell: 1,
+                                clientPhoneNo: 1,
+                                stockNo: 1,
+                                indoorSrNo: 1,
+                                outdoorSrNo: 1,
+                                weight: 1,
+                                unitIndoorNo: 1,
+                                unitOutdoorNo: 1,
+                                invoiceNo: 1,
+                                invoiceDate: 1,
+                                companyId: 1,
+                                billingAddress: 1,
+                            }
+                    }
+                ])
+        }
+        res.status(200).send({success: true, data});
+    } catch (err) {
         res.status(422).send({error: "Error in getting course details"});
     }
 }
