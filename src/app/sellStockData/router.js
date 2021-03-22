@@ -7,7 +7,7 @@ const router = express.Router( );
 
 router.post( "/create", controller.createSellStock );
 
-router.get("/get", controller.getSellStock);
+router.post("/get", controller.getSellStock);
 
 router.put("/update/:id", controller.updateSellStock);
 
