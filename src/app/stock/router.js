@@ -19,4 +19,6 @@ router.delete("/delete/:id", controller.deleteStock);
 
 router.post("/filter", controller.filterStockData);
 
+router.get("/getremainigstock", controller.getRemainingStock);
+
 module.exports = router;
