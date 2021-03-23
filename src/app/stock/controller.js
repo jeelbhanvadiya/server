@@ -42,6 +42,21 @@ exports.getSellStock = async (req, res) => {
     }
 };
 
+exports.getRemainingStock = async (req, res) => {
+    let arrray = [];
+    try {
+        const stock = await Stock.find({});
+        stock.forEach(item => {
+            if (item.sell === false) {
+            arrray.push(item)
+        }
+    })
+        res.status(200).send(arrray);
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+    }
+};
+
 exports.getStockNoWise = async (req, res) => {
     console.log(req.params.stockno)
     try {
