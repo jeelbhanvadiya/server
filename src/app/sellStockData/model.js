@@ -18,7 +18,7 @@ const sellStockSchema = new Schema(
                 billDate: {type: Date},
             }
         ],
-        Address: {
+        address: {
             houseNo: {type: String, required: true},
             streetName: {type: String, required: true},
             landmark: {type: String, required: true},
@@ -26,7 +26,6 @@ const sellStockSchema = new Schema(
             city: {type: String, required: true},
             state: {type: String, required: true},
             pinCode: {type: Number, required: true},
-
         }
     },
     {
