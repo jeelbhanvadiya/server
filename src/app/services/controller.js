@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId
 const Services = mongoose.model("services");
+const Users = mongoose.model("users");
 
 exports.createServices = async (req, res) => {
     if (!req.body) {
@@ -8,14 +9,22 @@ exports.createServices = async (req, res) => {
             message: "Users content can not be empty"
         });
     }
-    Services.create(req.body)
-        .then(SellStock => {
-            res.status(200).send({SellStock, message: "successfully Created services"});
-        }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while creating the company."
+    const isExist = await Users.findOne({firstName: req.body.name})
+    if (isExist && isExist._id) {
+        req.body.serviceManId = isExist._id;
+        Services.create(req.body)
+            .then(SellStock => {
+                res.status(200).send({SellStock, message: "successfully Created services"});
+            }).catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while creating the company."
+            });
         });
-    });
+    } else {
+        res.status(200).send({
+            message: "service man is not found"
+        });
+    }
 };
 
 exports.getServiceData = async (req, res) => {
