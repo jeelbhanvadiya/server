@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId
 const Services = mongoose.model("services");
 const Users = mongoose.model("users");
+const commanFun = require('../../commanFun/index')
 
 exports.createServices = async (req, res) => {
     if (!req.body) {
@@ -76,3 +77,73 @@ exports.uploadSignImage = async (req, res) => {
         res.send(err);
     }
 };
+
+exports.filterData = async (req, res) => {
+    try {
+        const {value, type} = req.body;
+        let data = [];
+        if (type === "DAY") {
+            data = await Services.find({serviceDate: commanFun.getFormatDate(value), serviceCompleteStatus: false})
+        } else if (type === "MONTH") {
+            data = await Services.aggregate(
+                [
+                    {
+                        $project:
+                            {
+                                month: {$month: '$serviceDate'},
+                                stockNo: 1,
+                                serviceDate: 1,
+                                serviceManId: 1,
+                                serviceCompleteStatus: 1,
+                                Feedback: 1,
+                                signatureImgUrl: 1
+                            }
+                    },
+                    {
+                        $match: {month: parseInt(value), serviceCompleteStatus: false }
+                    }
+                ])
+        } else if (type === "YEAR") {
+            data = await Services.aggregate(
+                [
+                    {
+                        $project:
+                            {
+                                year: {$year: '$serviceDate'},
+                                stockNo: 1,
+                                serviceDate: 1,
+                                serviceManId: 1,
+                                serviceCompleteStatus: 1,
+                                Feedback: 1,
+                                signatureImgUrl: 1
+                            }
+                    },
+                    {
+                        $match: {year: parseInt(value), serviceCompleteStatus: false}
+                    }
+                ])
+        } else if (type === "WEEK") {
+            data = await Services.aggregate(
+                [
+                    {
+                        $project:
+                            {
+                                week: {$week: '$serviceDate'},
+                                stockNo: 1,
+                                serviceDate: 1,
+                                serviceManId: 1,
+                                serviceCompleteStatus: 1,
+                                Feedback: 1,
+                                signatureImgUrl: 1
+                            }
+                    },
+                    {
+                    $match: {serviceCompleteStatus: false}
+                    }
+                ])
+        }
+        res.status(200).send({success: true, data});
+    } catch (err) {
+        res.status(422).send({error: "Error in getting course details"});
+    }
+}

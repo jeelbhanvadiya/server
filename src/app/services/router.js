@@ -28,4 +28,6 @@ router.delete("/delete/:id", controller.deleteService);
 
 router.put( "/uploadsignimg/:id", upload.single('file') , controller.uploadSignImage );
 
+router.post( "/filter", controller.filterData );
+
 module.exports = router;
