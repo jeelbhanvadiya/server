@@ -4,13 +4,13 @@ const md5 = require( "md5" );
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema( {
-    role : {type: String, required: true},
-    firstName: {type: String, required: true},
-    middleName: {type: String, required: true},
-    lastName: {type: String, required: true},
-    email: {type: String, required: true},
-    password: {type: String, required: true},
-    phoneNumber: {type: Number, required: true},
+    role : {type: String, required: false},
+    firstName: {type: String, required: false},
+    middleName: {type: String, required: false},
+    lastName: {type: String, required: false},
+    email: {type: String, required: false},
+    password: {type: String, required: false},
+    phoneNumber: {type: Number, required: false},
     address: {
         houseNo: String,
         streetName : String,

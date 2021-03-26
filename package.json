@@ -5,7 +5,7 @@
   "main": "startindex.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon startindex.js",
+    "start": "cross-env NODE_ENV=development nodemon startindex.js",
     "doc": "apidoc -i src/ -o doc",
     "lint": "eslint src",
     "ci": "npm run lint"
@@ -16,6 +16,7 @@
     "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "express": "^4.16.3",
     "express-jwt": "^5.3.1",
     "jsonwebtoken": "^8.0.0",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
-    "eslint-config-fortech": "^2.0.2"
+    "eslint-config-fortech": "^2.0.2",
+    "numeral": "^2.0.6"
   }
 }

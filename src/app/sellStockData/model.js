@@ -4,28 +4,28 @@ const Schema = mongoose.Schema;
 
 const sellStockSchema = new Schema(
     {
-        clientPhoneNo: {type: Number, required: true},
-        clientName: {type: String, required: true},
-        clientComapnyName: {type: String, required: true},
+        clientPhoneNo: {type: Number, required: false},
+        clientName: {type: String, required: false},
+        clientComapnyName: {type: String, required: false},
         stock: [
             {
-                stockNo: {type: Number, required: true},
-                price: {type: Number, required: true},
-                sellDate: {type: Date, required: true},
-                GSTNo: {type: String, required: true},
-                invoiceNo: {type: String, required: true},
-                billNo: {type: String, required: true},
+                stockNo: {type: Number, required: false},
+                price: {type: Number, required: false},
+                sellDate: {type: Date, required: false},
+                GSTNo: {type: String, required: false},
+                invoiceNo: {type: String, required: false},
+                billNo: {type: String, required: false},
                 billDate: {type: Date},
             }
         ],
         address: {
-            houseNo: {type: String, required: true},
-            streetName: {type: String, required: true},
-            landmark: {type: String, required: true},
-            area: {type: String, required: true},
-            city: {type: String, required: true},
-            state: {type: String, required: true},
-            pinCode: {type: Number, required: true},
+            houseNo: {type: String, required: false},
+            streetName: {type: String, required: false},
+            landmark: {type: String, required: false},
+            area: {type: String, required: false},
+            city: {type: String, required: false},
+            state: {type: String, required: false},
+            pinCode: {type: Number, required: false},
         }
     },
     {

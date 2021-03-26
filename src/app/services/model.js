@@ -6,8 +6,8 @@ const servicesSchema = new Schema(
     {
         stockNo: {type: Number},
         serviceDate: {type: Date},
-        serviceManId: {type: Schema.ObjectId, required: true},
-        serviceCompleteStatus: {type: Boolean, required: true},
+        serviceManId: {type: Schema.ObjectId, required: false},
+        serviceCompleteStatus: {type: Boolean, required: false},
         Feedback: {type: Boolean},
         signatureImgUrl: {type: String}
     },

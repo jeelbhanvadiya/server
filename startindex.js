@@ -5,6 +5,7 @@ const cors = require("cors");
 const config = require("./src/config");
 const customResponses = require("./src/middlewares/customResponses");
 const logger = require("./src/utilities/logger");
+const numeral = require("numeral");
 
 const app = express();
 const port = process.env.PORT || config.port;
@@ -51,6 +52,20 @@ app.use(function (req, res, next) {
     next();
 });
 
+setInterval(() => {
+    const { rss, heapTotal } = process.memoryUsage()
+    console.log(
+        "rss",
+        numeral(rss).format("0.0 ib"),
+        "heapTotal",
+        numeral(heapTotal).format("0.0 ib")
+    )
+}, 5000)
+
 app.listen(port, () => {
-    logger.info(`Listening on port ${port}`);
+    try {
+        console.log(`Server listening on port ${port}`)
+    } catch (err) {
+        console.log("Server init error", err)
+    }
 });
