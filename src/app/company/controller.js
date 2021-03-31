@@ -3,20 +3,24 @@ const mongoose = require("mongoose");
 const Company = mongoose.model("company");
 
 exports.createCompany = async (req, res) => {
-    if (!req.body) {
-        return res.status(400).send({
-            message: "Users content can not be empty"
+    try {
+        if (!req.body) {
+            return res.status(400).send({
+                message: "Users content can not be empty"
+            });
+        }
+        console.log(req.body)
+        Company.create(req.body)
+            .then(company => {
+                res.status(200).send({company, message: "successfully Created company"});
+            }).catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while creating the company."
+            });
         });
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while create company."});
     }
-    console.log(req.body)
-    Company.create(req.body)
-        .then(company => {
-            res.status(200).send({company, message: "successfully Created company"});
-        }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while creating the company."
-        });
-    });
 };
 
 exports.getCompany = async (req, res) => {

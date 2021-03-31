@@ -5,26 +5,30 @@ const Users = mongoose.model("users");
 const commanFun = require('../../commanFun/index')
 
 exports.createServices = async (req, res) => {
-    if (!req.body) {
-        return res.status(400).send({
-            message: "Users content can not be empty"
-        });
-    }
-    const isExist = await Users.findOne({firstName: req.body.name})
-    if (isExist && isExist._id) {
-        req.body.serviceManId = isExist._id;
-        Services.create(req.body)
-            .then(SellStock => {
-                res.status(200).send({SellStock, message: "successfully Created services"});
-            }).catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the company."
+    try {
+        if (!req.body) {
+            return res.status(400).send({
+                message: "Users content can not be empty"
             });
-        });
-    } else {
-        res.status(200).send({
-            message: "service man is not found"
-        });
+        }
+        const isExist = await Users.findOne({firstName: req.body.name})
+        if (isExist && isExist._id) {
+            req.body.serviceManId = isExist._id;
+            Services.create(req.body)
+                .then(SellStock => {
+                    res.status(200).send({SellStock, message: "successfully Created services"});
+                }).catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while creating the company."
+                });
+            });
+        } else {
+            res.status(200).send({
+                message: "service man is not found"
+            });
+        }
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while creating services."});
     }
 };
 

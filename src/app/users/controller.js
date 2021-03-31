@@ -116,3 +116,12 @@ exports.findAllServiceManList = async (req, res) => {
         return res.send({message: "No Service Man found"});
     }
 };
+
+exports.findAllManagerList = async (req, res) => {
+    const managerList = await Users.find({role: 'manager'});
+    if(managerList && managerList.length){
+        return res.send({managerList});
+    }else {
+        return res.send({message: "No  Manager found"});
+    }
+};

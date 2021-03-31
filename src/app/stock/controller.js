@@ -3,19 +3,23 @@ const commanFun = require('../../commanFun/index')
 const Stock = mongoose.model("stock");
 
 exports.createStock = async (req, res) => {
-    if (!req.body) {
-        return res.status(400).send({
-            message: "Users content can not be empty"
+    try {
+        if (!req.body) {
+            return res.status(400).send({
+                message: "Users content can not be empty"
+            });
+        }
+        Stock.create(req.body)
+            .then(stock => {
+                res.status(200).send({stock, message: "successfully Created stock"});
+            }).catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while creating the users."
+            });
         });
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while creating stock."});
     }
-    Stock.create(req.body)
-        .then(stock => {
-            res.status(200).send({stock, message: "successfully Created stock"});
-        }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while creating the users."
-        });
-    });
 };
 
 exports.getStock = async (req, res) => {

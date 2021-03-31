@@ -11,34 +11,38 @@ function getCurrentYear() {
 }
 
 exports.createSellStock = async (req, res) => {
-    const {clientPhoneNo, stock} = req.body;
-    const year = getCurrentYear();
-    const data = await sellStock.aggregate([{$count: "sellStock"}]);
-    let count = 1;
-    if (data && data.length > 0 && data[0].sellStock) {
-        count = data[0].sellStock + 1
-    }
-    stock.forEach(stock => {
-        stock.billNo = `JKR/${(parseInt(year) - 1) + "-" + parseInt(year)}/GST${getNumber(count, 5)}`
-    });
-    const isExist = await sellStock.findOne({clientPhoneNo: clientPhoneNo})
-    if (isExist && isExist._id) {
-        const update = await sellStock.updateOne({clientPhoneNo: clientPhoneNo}, {
-            $push: {
-                stock: {
-                    $each: stock,
-                    $position: -2
-                }
-            }
-        });
-        if(update && update.ok){
-            res.status(200).send({updated : true, message : "successfully updated"});
-        }else {
-            res.status(200).send({updated : false, message : "something went wrong"});
+    try {
+        const {clientPhoneNo, stock} = req.body;
+        const year = getCurrentYear();
+        const data = await sellStock.aggregate([{$count: "sellStock"}]);
+        let count = 1;
+        if (data && data.length > 0 && data[0].sellStock) {
+            count = data[0].sellStock + 1
         }
-    } else {
-        const create = await sellStock.create(req.body)
-        res.status(200).send(create)
+        stock.forEach(stock => {
+            stock.billNo = `JKR/${(parseInt(year) - 1) + "-" + parseInt(year)}/GST${getNumber(count, 5)}`
+        });
+        const isExist = await sellStock.findOne({clientPhoneNo: clientPhoneNo})
+        if (isExist && isExist._id) {
+            const update = await sellStock.updateOne({clientPhoneNo: clientPhoneNo}, {
+                $push: {
+                    stock: {
+                        $each: stock,
+                        $position: -2
+                    }
+                }
+            });
+            if (update && update.ok) {
+                res.status(200).send({updated: true, message: "successfully updated"});
+            } else {
+                res.status(200).send({updated: false, message: "something went wrong"});
+            }
+        } else {
+            const create = await sellStock.create(req.body)
+            res.status(200).send(create)
+        }
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while creating sell -stock."});
     }
 };
 

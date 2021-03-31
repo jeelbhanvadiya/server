@@ -18,4 +18,6 @@ router.post( "/forgot-password", controller.forgetPassword );
 
 router.get( "/getservicemanlist", controller.findAllServiceManList );
 
+router.get( "/getmanagerlist", controller.findAllManagerList );
+
 module.exports = router;
