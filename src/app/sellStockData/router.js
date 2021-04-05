@@ -1,4 +1,6 @@
 require( "./model" );
+require( "../stock/model" );
+
 const express = require( "express" );
 
 const controller = require( "./controller" );

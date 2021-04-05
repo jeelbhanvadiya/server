@@ -31,31 +31,15 @@ exports.getStock = async (req, res) => {
     }
 };
 
-exports.getSellStock = async (req, res) => {
-    let arrray = [];
-    try {
-        const stock = await Stock.find({});
-        stock.forEach(item => {
-            if (item.sell === true) {
-                arrray.push(item)
-            }
-        })
-        res.status(200).send(arrray);
-    } catch (err) {
-        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
-    }
-};
 
-exports.getRemainingStock = async (req, res) => {
-    let arrray = [];
+exports.filterBySellData = async (req, res) => {
     try {
-        const stock = await Stock.find({});
-        stock.forEach(item => {
-            if (item.sell === false) {
-            arrray.push(item)
+        const { sell } = req.body
+        if(!req.body){
+            return res.status(200).send({message: "Please pass the valid data"});
         }
-    })
-        res.status(200).send(arrray);
+        const stock = await Stock.find({sell: sell});
+        res.status(200).send(stock);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
     }

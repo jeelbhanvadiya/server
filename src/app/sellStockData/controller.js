@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const sellStock = mongoose.model("sellStock");
+const stockModal = mongoose.model("stock");
 
 function getNumber(num, targetLength) {
     return num.toString().padStart(targetLength, 0);
@@ -39,7 +40,37 @@ exports.createSellStock = async (req, res) => {
             }
         } else {
             const create = await sellStock.create(req.body)
-            res.status(200).send(create)
+            if (create && create._id) {
+                const promiseBuilder = {
+                    updateAppPromise: (payload) => {
+                        return new Promise(async (resolve) => {
+                            const update = await stockModal.updateOne({stockNo: payload.stockNo}, {
+                                sell: true,
+                                clientPhoneNo: clientPhoneNo
+                            });
+                            if (update && update.ok) {
+                                return resolve({success: true});
+                            } else {
+                                return resolve({success: false});
+                            }
+                        });
+                    }
+                };
+                const allPromises = [];
+                stock.forEach((item) => {
+                    allPromises.push(promiseBuilder.updateAppPromise(item));
+                });
+                await Promise.all(allPromises).then(values => {
+                    if (values.some(value => value.success)) {
+                        res.status(200).send(create)
+                    } else {
+                        res.status(500).send({success: false, message: "something went wrong"})
+                    }
+                });
+            } else {
+                res.status(200).send({success: false, message: 'something went wrong'})
+            }
+
         }
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while creating sell -stock."});
@@ -49,7 +80,7 @@ exports.createSellStock = async (req, res) => {
 exports.getSellStock = async (req, res) => {
     try {
         let query = {}
-        if(req.body.query){
+        if (req.body.query) {
             query = req.body.query
             // query = {clientName: 'bhautik'}
             // query = {clientComapnyName: 'joy'}

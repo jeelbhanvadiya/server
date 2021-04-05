@@ -9,8 +9,6 @@ router.post( "/create", controller.createStock );
 
 router.get("/get", controller.getStock);
 
-router.get("/getsellstock", controller.getSellStock);
-
 router.get("/getstockno/:stockno", controller.getStockNoWise);
 
 router.put("/update/:id", controller.updateStock);
@@ -19,6 +17,6 @@ router.delete("/delete/:id", controller.deleteStock);
 
 router.post("/filter", controller.filterStockData);
 
-router.get("/getremainigstock", controller.getRemainingStock);
+router.post("/filterbysell", controller.filterBySellData);
 
 module.exports = router;

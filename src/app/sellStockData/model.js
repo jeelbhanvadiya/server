@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 
 const sellStockSchema = new Schema(
     {
-        clientPhoneNo: {type: Number, required: false},
+        clientPhoneNo: {type: Number, required: true},
         clientName: {type: String, required: false},
         clientComapnyName: {type: String, required: false},
         stock: [
             {
-                stockNo: {type: Number, required: false},
+                stockNo: {type: Number, required: true},
                 price: {type: Number, required: false},
                 sellDate: {type: Date, required: false},
                 GSTNo: {type: String, required: false},
