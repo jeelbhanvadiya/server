@@ -8,7 +8,7 @@ const stockSchema = new Schema(
         stockNo : {type: Number, required: false},
         indoorSrNo : {type: String ,required: false},
         outdoorSrNo : {type: String ,required: false},
-        weight: {type: Number ,required: false},
+        weight: {type: Float32Array ,required: false},
         unitIndoorNo : {type: String ,required: false},
         unitOutdoorNo : {type: String ,required: false},
         clientPhoneNo : {type: Number ,default : null},
