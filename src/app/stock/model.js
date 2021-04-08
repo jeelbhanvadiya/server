@@ -8,12 +8,14 @@ const stockSchema = new Schema(
         stockNo : {type: Number, required: false},
         indoorSrNo : {type: String ,required: false},
         outdoorSrNo : {type: String ,required: false},
-        weight: {type: Float32Array ,required: false},
+        weight: {type: Number ,required: false},
         unitIndoorNo : {type: String ,required: false},
         unitOutdoorNo : {type: String ,required: false},
         clientPhoneNo : {type: Number ,default : null},
         invoiceNo : {type: String },
         invoiceDate : {type: Date},
+        acType: {type:String},
+        acCompanyName: {type : String},
         companyId : {
             type: Schema.ObjectId , ref : "company" ,required : false
         },
