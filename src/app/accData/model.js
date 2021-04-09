@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 
 const AcSchema = new Schema(
     {
-        "acCapacity": Number,
-        "acCompanyName": String,
-        "MID": String,
-        "MOD": String,
-        "acType": String
+        acCapacity:  {type: Array, required: false},
+        acCompanyName:  {type: Array, required: false},
+        MID:  {type: Array, required: false},
+        MOD:  {type: Array, required: false},
+        acType:  {type: Array, required: false}
     }
 );
 

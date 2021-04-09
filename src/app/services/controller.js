@@ -24,7 +24,7 @@ exports.createServices = async (req, res) => {
             });
         } else {
             res.status(200).send({
-                message: "service man is not found"
+                message: "service man is not found pass service man name"
             });
         }
     } catch (err) {

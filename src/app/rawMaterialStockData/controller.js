@@ -27,9 +27,8 @@ exports.createMaterialData = async (req, res) => {
 
 exports.getRawMaterialData = async (req, res) => {
     try {
-        let query = {};
-        const rawMaterial = await rawMaterial.find(query);
-        res.status(200).send(rawMaterial);
+        const data = await rawMaterial.find({});
+        res.status(200).send(data);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while finding data."});
     }

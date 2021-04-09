@@ -6,7 +6,7 @@ exports.creatAcData = async (req, res) => {
     try {
         if (!req.body) {
             return res.status(400).send({
-                message: "Users content can not be empty"
+                message: "Data content can not be empty"
             });
         }
         acData.create(req.body)
@@ -27,7 +27,7 @@ exports.getAcData = async (req, res) => {
         const data = await acData.find({});
         res.status(200).send(data);
     } catch (err) {
-        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+        res.status(500).send({message: err.message || "Some error occurred while getting data."});
     }
 };
 
@@ -38,10 +38,10 @@ exports.updateAcData = async (req, res) => {
             if (editedAcData && editedAcData.id) {
                 res.status(200).send({success: true, editedAcData});
             } else {
-                res.status(401).send({success: false, message: "user is not found"});
+                res.status(401).send({success: false, message: "data not found"});
             }
         } else {
-            res.status(404).send({success: false, message: "Please send correct user info"});
+            res.status(404).send({success: false, message: "Please send correct payload info"});
         }
     } catch (err) {
         res.send(err);
@@ -53,6 +53,6 @@ exports.deleteAcData = async (req, res) => {
         await acData.deleteOne({_id: req.params.id})
         res.status(200).send("success");
     } catch(err) {
-        res.status(422).send({error: "Error in getting course details"});
+        res.status(422).send({error: "Error in deleting data"});
     }
 }
