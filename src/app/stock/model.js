@@ -16,6 +16,7 @@ const stockSchema = new Schema(
         invoiceDate : {type: Date},
         acType: {type:String},
         acCompanyName: {type : String},
+        star:{type:Number},
         companyId : {
             type: Schema.ObjectId , ref : "company" ,required : false
         },

@@ -13,8 +13,8 @@ exports.createData = async (req, res) => {
 exports.getRemainingRawMaterialData = async (req, res) => {
     try {
         let query = {};
-        const remainingRawMaterial = await remainingRawMaterial.find(query);
-        res.status(200).send(remainingRawMaterial);
+        const data = await remainingRawMaterial.find(query);
+        res.status(200).send(data);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while finding data."});
     }
