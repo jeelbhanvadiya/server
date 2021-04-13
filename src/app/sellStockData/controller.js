@@ -94,6 +94,23 @@ exports.getSellStock = async (req, res) => {
     }
 };
 
+exports.getSellStockStockNo = async (req, res) => {
+    try {
+        const data = await sellStock.find({});
+        let datalist = {};
+        data.map(item => {
+            datalist = item.stock.find(prod => Number(prod.stockNo) === Number(req.params.stockno))
+        });
+        if(datalist) {
+            res.status(200).send(datalist);
+        } else {
+            res.status(200).send("Not Found any data");
+        }
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+    }
+};
+
 exports.updateSellStock = async (req, res) => {
     try {
         console.log(req.params.id)

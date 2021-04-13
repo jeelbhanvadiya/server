@@ -9,7 +9,7 @@ exports.createMaterialData = async (req, res) => {
             const isExist = await remainingRawMaterial.findOne({typeId: req.body.typeId})
             if (isExist && isExist._id) {
                 const update = await remainingRawMaterial.updateOne({typeId: req.body.typeId},
-                    {$inc: {weight: req.body.weight}});
+                    {$inc: {weight: req.body.weight,piece : req.body.piece,length:req.body.length}});
                 if (update && update.ok) {
                     res.status(200).send({success: true})
                 }
