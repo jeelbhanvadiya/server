@@ -111,6 +111,37 @@ exports.getSellStockStockNo = async (req, res) => {
     }
 };
 
+
+exports.searchingSellStock = async (req, res) => {
+    try {
+        const data = await sellStock.find({});
+        let datalist = [];
+        if(req.body.stockNo) {
+            data.map(item => {
+                datalist = item.stock.filter(prod => prod.stockNo.toString().includes(req.body.stockNo.toString()))
+                res.status(200).send(datalist);
+            });
+        } else if(req.body.clientName) {
+            // datalist = data.find(item => item.clientName.toString().includes(req.body.clientName.toString()))
+            const data = await sellStock.aggregate([
+                {$match: {clientName: {$regex:  req.body.clientName, "$options": "i"}}}
+            ]);
+            res.status(200).send(data);
+        }else if(req.body.clientPhoneNo) {
+            // datalist = data.find(item => item.clientName.toString().includes(req.body.clientName.toString()))
+            const data = await sellStock.aggregate([
+                {$match:{clientPhoneNo: req.body.clientPhoneNo}}
+            ]);
+            res.status(200).send(data);
+        } else {
+            res.status(200).send("Not Found any data");
+        }
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+    }
+};
+
+
 exports.updateSellStock = async (req, res) => {
     try {
         console.log(req.params.id)

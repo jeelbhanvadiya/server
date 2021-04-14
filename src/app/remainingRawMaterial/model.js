@@ -7,6 +7,7 @@ const remainingRawMaterialStockSchema = new Schema(
         typeId: {type: Number, required: true},
         weight: {type: Number, required: false},
         piece: {type: Number, required: false},
+        length : {type:Number,required : false}
     },
     {
         timestamps: true,

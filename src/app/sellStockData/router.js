@@ -17,4 +17,6 @@ router.delete("/delete/:id", controller.deleteSellStock);
 
 router.post("/:stockno", controller.getSellStockStockNo);
 
+router.get("/searching", controller.searchingSellStock);
+
 module.exports = router;
