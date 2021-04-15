@@ -121,6 +121,21 @@ exports.searchingSellStock = async (req, res) => {
                 datalist = item.stock.filter(prod => prod.stockNo.toString().includes(req.body.stockNo.toString()))
                 res.status(200).send(datalist);
             });
+        }else if (req.body.GSTNo) {
+            data.map(item => {
+                datalist = item.stock.filter(prod => prod.GSTNo.toString().includes(req.body.GSTNo.toString()))
+                res.status(200).send(datalist);
+            });
+        }else if (req.body.unitIndoorNo) {
+            data.map(item => {
+                datalist = item.stock.filter(prod => prod.unitIndoorNo.toString().includes(req.body.unitIndoorNo.toString()))
+                res.status(200).send(datalist);
+            });
+        }else if (req.body.unitOutdoorNo) {
+            data.map(item => {
+                datalist = item.stock.filter(prod => prod.unitOutdoorNo.toString().includes(req.body.unitOutdoorNo.toString()))
+                res.status(200).send(datalist);
+            });
         } else if(req.body.clientName) {
             // datalist = data.find(item => item.clientName.toString().includes(req.body.clientName.toString()))
             const data = await sellStock.aggregate([
@@ -129,10 +144,9 @@ exports.searchingSellStock = async (req, res) => {
             res.status(200).send(data);
         }else if(req.body.clientPhoneNo) {
             // datalist = data.find(item => item.clientName.toString().includes(req.body.clientName.toString()))
-            const data = await sellStock.aggregate([
-                {$match:{clientPhoneNo: req.body.clientPhoneNo}}
-            ]);
-            res.status(200).send(data);
+            const data = await sellStock.find({});
+            datalist = data.filter(prod => prod.clientPhoneNo.toString().includes(req.body.clientPhoneNo.toString()))
+            res.status(200).send(datalist);
         } else {
             res.status(200).send("Not Found any data");
         }

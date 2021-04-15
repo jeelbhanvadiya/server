@@ -8,7 +8,8 @@ const AcSchema = new Schema(
         acCompanyName:  {type: Array, required: false},
         MID:  {type: Array, required: false},
         MOD:  {type: Array, required: false},
-        acType:  {type: Array, required: false}
+        acType:  {type: Array, required: false},
+        stockNo:  {type: Number, required: false}
     }
 );
 
