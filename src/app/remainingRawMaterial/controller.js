@@ -12,8 +12,16 @@ exports.createData = async (req, res) => {
 
 exports.getRemainingRawMaterialData = async (req, res) => {
     try {
-        let query = {};
-        const data = await remainingRawMaterial.find(query);
+        const data = await remainingRawMaterial.find({});
+        res.status(200).send(data);
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while finding data."});
+    }
+};
+
+exports.getByTypeId = async (req, res) => {
+    try {
+        const data = await remainingRawMaterial.findOne({typeId :req.params.id});
         res.status(200).send(data);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while finding data."});

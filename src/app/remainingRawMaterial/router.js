@@ -9,6 +9,8 @@ router.post( "/create", controller.createData );
 
 router.post("/get", controller.getRemainingRawMaterialData);
 
+router.get("/get/:id", controller.getByTypeId);
+
 router.put("/update/:id", controller.updateData);
 
 router.delete("/delete/:id", controller.deleteData);
