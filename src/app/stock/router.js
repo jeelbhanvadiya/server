@@ -19,4 +19,6 @@ router.post("/filter", controller.filterStockData);
 
 router.post("/filterbysell", controller.filterBySellData);
 
+router.get("/getbyweight/", controller.getDataByCapacity);
+
 module.exports = router;

@@ -45,6 +45,16 @@ exports.filterBySellData = async (req, res) => {
     }
 };
 
+exports.getDataByCapacity = async (req, res) => {
+    try {
+        console.log(req.query.weight);
+        const stock = await Stock.find({sell: false, weight : req.query.weight});
+        res.status(200).send(stock);
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while getting data."});
+    }
+};
+
 exports.getStockNoWise = async (req, res) => {
     console.log(req.params.stockno)
     try {
