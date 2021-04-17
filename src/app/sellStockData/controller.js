@@ -116,36 +116,36 @@ exports.searchingSellStock = async (req, res) => {
     try {
         const data = await sellStock.find({});
         let datalist = [];
-        if(req.body.stockNo) {
+        if(req.query.stockNo) {
             data.map(item => {
-                datalist = item.stock.filter(prod => prod.stockNo.toString().includes(req.body.stockNo.toString()))
+                datalist = item.stock.filter(prod => prod.stockNo.toString().includes(req.query.stockNo.toString()))
                 res.status(200).send(datalist);
             });
-        }else if (req.body.GSTNo) {
+        }else if (req.query.GSTNo) {
             data.map(item => {
-                datalist = item.stock.filter(prod => prod.GSTNo.toString().includes(req.body.GSTNo.toString()))
+                datalist = item.stock.filter(prod => prod.GSTNo.toString().includes(req.query.GSTNo.toString()))
                 res.status(200).send(datalist);
             });
-        }else if (req.body.unitIndoorNo) {
+        }else if (req.query.unitIndoorNo) {
             data.map(item => {
-                datalist = item.stock.filter(prod => prod.unitIndoorNo.toString().includes(req.body.unitIndoorNo.toString()))
+                datalist = item.stock.filter(prod => prod.unitIndoorNo.toString().includes(req.query.unitIndoorNo.toString()))
                 res.status(200).send(datalist);
             });
-        }else if (req.body.unitOutdoorNo) {
+        }else if (req.query.unitOutdoorNo) {
             data.map(item => {
-                datalist = item.stock.filter(prod => prod.unitOutdoorNo.toString().includes(req.body.unitOutdoorNo.toString()))
+                datalist = item.stock.filter(prod => prod.unitOutdoorNo.toString().includes(req.query.unitOutdoorNo.toString()))
                 res.status(200).send(datalist);
             });
-        } else if(req.body.clientName) {
+        } else if(req.query.clientName) {
             // datalist = data.find(item => item.clientName.toString().includes(req.body.clientName.toString()))
             const data = await sellStock.aggregate([
-                {$match: {clientName: {$regex:  req.body.clientName, "$options": "i"}}}
+                {$match: {clientName: {$regex:  req.query.clientName, "$options": "i"}}}
             ]);
             res.status(200).send(data);
-        }else if(req.body.clientPhoneNo) {
+        }else if(req.query.clientPhoneNo) {
             // datalist = data.find(item => item.clientName.toString().includes(req.body.clientName.toString()))
             const data = await sellStock.find({});
-            datalist = data.filter(prod => prod.clientPhoneNo.toString().includes(req.body.clientPhoneNo.toString()))
+            datalist = data.filter(prod => prod.clientPhoneNo.toString().includes(req.query.clientPhoneNo.toString()))
             res.status(200).send(datalist);
         } else {
             res.status(200).send("Not Found any data");
