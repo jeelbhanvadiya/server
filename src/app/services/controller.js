@@ -12,16 +12,26 @@ exports.createServices = async (req, res) => {
             });
         }
         const isExist = await Users.findOne({firstName: req.body.name})
+        const isStockNO = await Services.findOne({stockNo: req.body.stockNo})
         if (isExist && isExist._id) {
-            req.body.serviceManId = isExist._id;
-            Services.create(req.body)
-                .then(SellStock => {
-                    res.status(200).send({SellStock, message: "successfully Created services"});
-                }).catch(err => {
-                res.status(500).send({
-                    message: err.message || "Some error occurred while creating the company."
-                });
+            const data = req.body.services.map(item => {
+                return item.serviceManId = isExist._id;
             });
+            if (!isStockNO) {
+                Services.create(req.body)
+                    .then(SellStock => {
+                        res.status(200).send({SellStock, message: "successfully Created services"});
+                    }).catch(err => {
+                    res.status(500).send({
+                        message: err.message || "Some error occurred while creating the company."
+                    });
+                })
+            } else {
+                isStockNO.services.push(req.body.services);
+                await Services.findOneAndUpdate({stockNo: req.body.stockNo}, isStockNO).then(data => {
+                    res.status(200).send({updateList: data , message: "successfully updated services"});
+                });
+            }
         } else {
             res.status(200).send({
                 message: "service man is not found pass service man name"
@@ -41,21 +51,28 @@ exports.getServiceData = async (req, res) => {
     }
 };
 
+exports.getServicesStockNo = async (req, res) => {
+    try {
+        const SellStock = await Services.findOne({stockNo: req.params.id});
+        res.status(200).send(SellStock.services);
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+    }
+};
+
 exports.updateService = async (req, res) => {
     try {
-        console.log(req.params.id)
-        if (req.params.id) {
-            const editedCompany = await Services.findByIdAndUpdate(req.params.id, req.body);
-            if (editedCompany && editedCompany._id) {
-                res.status(200).send({success: true, editedCompany});
-            } else {
-                res.status(401).send({success: false, message: "user is not found"});
+        const list = await Services.findOne({stockNo: req.body.stockNo})
+        list.services.map(item => {
+            if (item.serviceCompleteStatus === false) {
+                item.serviceCompleteStatus = true
             }
-        } else {
-            res.status(404).send({success: false, message: "Please send correct user info"});
-        }
+        })
+        await Services.findOneAndUpdate({stockNo: req.body.stockNo}, list).then(data => {
+            res.status(200).send({updateList: data , message: "successfully updated services"});
+        });
     } catch (err) {
-        res.send(err);
+        res.status(404).send({success: false, message: "Please send correct user info"});
     }
 };
 
@@ -63,7 +80,7 @@ exports.deleteService = async (req, res) => {
     try {
         await Services.deleteOne({_id: req.params.id})
         res.status(200).send("success");
-    } catch(err) {
+    } catch (err) {
         res.status(422).send({error: "Error in getting course details"});
     }
 }
@@ -104,7 +121,7 @@ exports.filterData = async (req, res) => {
                             }
                     },
                     {
-                        $match: {month: parseInt(value), serviceCompleteStatus: false }
+                        $match: {month: parseInt(value), serviceCompleteStatus: false}
                     }
                 ])
         } else if (type === "YEAR") {
@@ -142,7 +159,7 @@ exports.filterData = async (req, res) => {
                             }
                     },
                     {
-                    $match: {serviceCompleteStatus: false}
+                        $match: {serviceCompleteStatus: false}
                     }
                 ])
         }

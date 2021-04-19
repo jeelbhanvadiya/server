@@ -22,7 +22,9 @@ router.post( "/create", controller.createServices );
 
 router.get("/get", controller.getServiceData);
 
-router.put("/update/:id", controller.updateService);
+router.get("/get/:id", controller.getServicesStockNo);
+
+router.put("/update", controller.updateService);
 
 router.delete("/delete/:id", controller.deleteService);
 

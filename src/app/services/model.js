@@ -6,10 +6,15 @@ const servicesSchema = new Schema(
     {
         stockNo: {type: Number},
         serviceDate: {type: Date},
-        serviceManId: {type: Schema.ObjectId, required: false},
-        serviceCompleteStatus: {type: Boolean, required: false},
-        Feedback: {type: Boolean},
-        signatureImgUrl: {type: String}
+        services : [
+            {
+                serviceManId: {type: Schema.ObjectId, required: false},
+                serviceCompleteStatus: {type: Boolean, required: false , default: false},
+                Feedback: {type: Boolean , default: false},
+                signatureImgUrl: {type: String},
+                serviceDate : {type: String},
+            }
+        ],
     },
     {
         timestamps: true,
