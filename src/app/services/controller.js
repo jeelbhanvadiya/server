@@ -18,6 +18,7 @@ exports.createServices = async (req, res) => {
             //     return item.serviceManId = isExist._id;
             // });
             if (!isStockNO) {
+                console.log("create")
                 Services.create(req.body)
                     .then(SellStock => {
                         res.status(200).send({SellStock, message: "successfully Created services"});
@@ -27,10 +28,16 @@ exports.createServices = async (req, res) => {
                     });
                 })
             } else {
-                isStockNO.services.push(req.body.services);
-                await Services.findOneAndUpdate({stockNo: req.body.stockNo}, isStockNO).then(data => {
-                    res.status(200).send({updateList: data , message: "successfully updated services"});
-                });
+                console.log("update");
+                const abc = isStockNO.services.pop();
+                    if(abc.serviceCompleteStatus){
+                        isStockNO.services.push(req.body.services[0]);
+                        await Services.findOneAndUpdate({stockNo: req.body.stockNo}, isStockNO).then(data => {
+                            res.status(200).send({updateList: data , message: "successfully updated services"});
+                        });
+                    }else {
+                        res.status(200).send({message: "Please Complete first Pending Service"});
+                    }
             }
         }  catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while creating services."});
@@ -80,10 +87,11 @@ exports.deleteByServiceId = async (req, res) => {
         }
         const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
         const data = isStockNO;
+        console.log(data)
         if(isStockNO) {
             await data.services.splice(-1,1);
             console.log(data)
-            const list = await Services.findOneAndUpdate({stockNo: req.body.stockNo}, data.services )
+            const list = await Services.findOneAndUpdate({stockNo: req.body.stockNo}, data )
             res.status(200).send({serviceList: list , message: "successfully deleted services"});
         }
     } catch (err) {

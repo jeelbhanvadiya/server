@@ -21,4 +21,6 @@ router.post("/filterbysell", controller.filterBySellData);
 
 router.get("/getbyweight/", controller.getDataByCapacity);
 
+router.get("/getbyweighttrue/", controller.getDataByCapacityTrue);
+
 module.exports = router;
