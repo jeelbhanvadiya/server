@@ -11,12 +11,12 @@ exports.createServices = async (req, res) => {
                 message: "Users content can not be empty"
             });
         }
-        const isExist = await Users.findOne({firstName: req.body.name})
+        // const isExist = await Users.findOne({firstName: req.body.name})
         const isStockNO = await Services.findOne({stockNo: req.body.stockNo})
-        if (isExist && isExist._id) {
-            const data = req.body.services.map(item => {
-                return item.serviceManId = isExist._id;
-            });
+        // if (isExist && isExist._id) {
+            // const data = req.body.services.map(item => {
+            //     return item.serviceManId = isExist._id;
+            // });
             if (!isStockNO) {
                 Services.create(req.body)
                     .then(SellStock => {
@@ -32,12 +32,7 @@ exports.createServices = async (req, res) => {
                     res.status(200).send({updateList: data , message: "successfully updated services"});
                 });
             }
-        } else {
-            res.status(200).send({
-                message: "service man is not found pass service man name"
-            });
-        }
-    } catch (err) {
+        }  catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while creating services."});
     }
 };
@@ -76,9 +71,29 @@ exports.updateService = async (req, res) => {
     }
 };
 
+exports.deleteByServiceId = async (req, res) => {
+    try {
+        if (!req.body) {
+            return res.status(400).send({
+                message: "please pass stockno and service id, it can not be empty"
+            });
+        }
+        const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
+        const data = isStockNO;
+        if(isStockNO) {
+            await data.services.splice(-1,1);
+            console.log(data)
+            const list = await Services.findOneAndUpdate({stockNo: req.body.stockNo}, data.services )
+            res.status(200).send({serviceList: list , message: "successfully deleted services"});
+        }
+    } catch (err) {
+        res.status(422).send({error: "Error in getting course details"});
+    }
+}
+
 exports.deleteService = async (req, res) => {
     try {
-        await Services.deleteOne({_id: req.params.id})
+        await Services.deleteOne({_id: req.params.id});
         res.status(200).send("success");
     } catch (err) {
         res.status(422).send({error: "Error in getting course details"});

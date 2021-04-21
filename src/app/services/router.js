@@ -28,6 +28,8 @@ router.put("/update", controller.updateService);
 
 router.delete("/delete/:id", controller.deleteService);
 
+router.put("/deletebyserviceid", controller.deleteByServiceId);
+
 router.put( "/uploadsignimg/:id", upload.single('file') , controller.uploadSignImage );
 
 router.post( "/filter", controller.filterData );
