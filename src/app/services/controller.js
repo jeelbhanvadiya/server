@@ -12,13 +12,8 @@ exports.createServices = async (req, res) => {
             });
         }
         // const isExist = await Users.findOne({firstName: req.body.name})
-        const isStockNO = await Services.findOne({stockNo: req.body.stockNo})
-        // if (isExist && isExist._id) {
-            // const data = req.body.services.map(item => {
-            //     return item.serviceManId = isExist._id;
-            // });
+        const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
             if (!isStockNO) {
-                console.log("create")
                 Services.create(req.body)
                     .then(SellStock => {
                         res.status(200).send({SellStock, message: "successfully Created services"});
@@ -28,9 +23,7 @@ exports.createServices = async (req, res) => {
                     });
                 })
             } else {
-                console.log("update");
-                const abc = isStockNO.services.pop();
-                    if(abc.serviceCompleteStatus){
+                    if(isStockNO.services[isStockNO.services.length - 1].serviceCompleteStatus === true){
                         isStockNO.services.push(req.body.services[0]);
                         await Services.findOneAndUpdate({stockNo: req.body.stockNo}, isStockNO).then(data => {
                             res.status(200).send({updateList: data , message: "successfully updated services"});
