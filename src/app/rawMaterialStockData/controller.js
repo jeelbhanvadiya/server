@@ -45,8 +45,9 @@ exports.updateRawMaterialData = async (req, res) => {
 
 exports.deleteRawMaterialData = async (req, res) => {
     try {
-        await rawMaterial.deleteOne({_id: req.params.id});
-        res.status(200).send("success");
+        const updated = await remainingRawMaterial.updateOne({typeId: req.body.typeId},
+            {$inc: {weight: -req?.body?.weight || 0, piece : -req?.body?.piece || 0 , length: -req?.body?.length || 0}});
+        res.status(200).send({message:"success"});
     } catch (err) {
         res.status(422).send({error: "Some error occurred while delete stock."});
     }

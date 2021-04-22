@@ -62,7 +62,8 @@ exports.updateService = async (req, res) => {
             if (item.serviceCompleteStatus === false) {
                 item.serviceCompleteStatus = true
             }
-        })
+        });
+        list.services[list.services.length - 1].signatureImgUrl = req.body.services[0].signatureImgUrl;
         await Services.findOneAndUpdate({stockNo: req.body.stockNo}, list).then(data => {
             res.status(200).send({updateList: data , message: "successfully updated services"});
         });

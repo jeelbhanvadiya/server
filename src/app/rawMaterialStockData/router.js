@@ -13,6 +13,6 @@ router.post("/get", controller.getRawMaterialData);
 
 router.put("/update/:id", controller.updateRawMaterialData);
 
-router.delete("/delete/:id", controller.deleteRawMaterialData);
+router.post("/delete", controller.deleteRawMaterialData);
 
 module.exports = router;

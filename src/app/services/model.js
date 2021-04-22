@@ -11,7 +11,7 @@ const servicesSchema = new Schema(
                 serviceManId: {type: Schema.ObjectId, required: false},
                 serviceCompleteStatus: {type: Boolean, required: false , default: false},
                 Feedback: {type: Boolean , default: false},
-                signatureImgUrl: {type: String},
+                signatureImgUrl: {type: String ,default:null},
                 serviceDate : {type: String},
             }
         ],
