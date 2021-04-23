@@ -13,6 +13,8 @@ const servicesSchema = new Schema(
                 Feedback: {type: Boolean , default: false},
                 signatureImgUrl: {type: String ,default:null},
                 serviceDate : {type: String},
+                serviceRating: {type:Number, default:0},
+                serviceBoyRating : {type:Number ,default : 0}
             }
         ],
     },

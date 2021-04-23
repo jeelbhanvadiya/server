@@ -57,18 +57,22 @@ exports.getServicesStockNo = async (req, res) => {
 
 exports.updateService = async (req, res) => {
     try {
-        const list = await Services.findOne({stockNo: req.body.stockNo})
-        list.services.map(item => {
-            if (item.serviceCompleteStatus === false) {
-                item.serviceCompleteStatus = true
-            }
-        });
-        list.services[list.services.length - 1].signatureImgUrl = req.body.services[0].signatureImgUrl;
-        await Services.findOneAndUpdate({stockNo: req.body.stockNo}, list).then(data => {
-            res.status(200).send({updateList: data , message: "successfully updated services"});
-        });
+        const list = await Services.findOne({stockNo: req.body.stockNo});
+        if (list) {
+            list.services.map(item => {
+                if (item.serviceCompleteStatus === false) {
+                    item.serviceCompleteStatus = true
+                }
+            });
+            list.services[list.services.length - 1].signatureImgUrl = req.body.services[0].signatureImgUrl;
+            await Services.findOneAndUpdate({stockNo: req.body.stockNo}, list).then(data => {
+                res.status(200).send({updateList: data, message: "successfully updated services"});
+            });
+        }else {
+            res.status(200).send({ message: "stock not found services"});
+        }
     } catch (err) {
-        res.status(404).send({success: false, message: "Please send correct user info"});
+        res.status(404).send({success: false, message: "Please send correct info"});
     }
 };
 
