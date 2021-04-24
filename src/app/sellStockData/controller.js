@@ -115,7 +115,7 @@ exports.getSellStockStockNo = async (req, res) => {
 exports.searchingSellStock = async (req, res) => {
     try {
         let stockData
-        let stockSearchList = ["GSTNo", "unitIndoorNo", "unitOutdoorNo", "stockNo"]
+        let stockSearchList = ["GSTNo", "unitIndoorNo", "unitOutdoorNo", "stockNo"];
         let keyName = Object.keys(req.query)[0]
         if (stockSearchList.includes(Object.keys(req.query)[0])) {
             keyName = "stock.".concat(Object.keys(req.query)[0].toString())
