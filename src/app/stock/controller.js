@@ -9,14 +9,14 @@ exports.createStock = async (req, res) => {
                 message: "Users content can not be empty"
             });
         }
-        Stock.create(req.body)
-            .then(stock => {
-                res.status(200).send({stock, message: "successfully Created stock"});
-            }).catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the users."
+            Stock.create(req.body)
+                .then(stock => {
+                    res.status(200).send({stock, message: "successfully Created stock"});
+                }).catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while creating the users."
+                });
             });
-        });
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while creating stock."});
     }
@@ -47,8 +47,8 @@ exports.filterBySellData = async (req, res) => {
 
 exports.getDataByCapacity = async (req, res) => {
     try {
-        console.log(req.query.weight);
-        const stock = await Stock.find({sell: false, weight : req.query.weight});
+        let keyName = Object.keys(req.query)[0]
+        const stock = await Stock.find({sell: false, [keyName]: Object.values(req.query)[0]});
         res.status(200).send(stock);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while getting data."});
@@ -57,8 +57,8 @@ exports.getDataByCapacity = async (req, res) => {
 
 exports.getDataByCapacityTrue = async (req, res) => {
     try {
-        console.log(req.query.weight);
-        const stock = await Stock.find({sell: true, weight : req.query.weight});
+        let keyName = Object.keys(req.query)[0]
+        const stock = await Stock.find({sell: true, [keyName]: Object.values(req.query)[0]});
         res.status(200).send(stock);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while getting data."});

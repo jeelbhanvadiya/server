@@ -1,5 +1,5 @@
 const mongoose = require( "mongoose" );
-
+const Float = require('mongoose-float').loadType(mongoose);
 const Schema = mongoose.Schema;
 
 const stockSchema = new Schema(
@@ -8,7 +8,7 @@ const stockSchema = new Schema(
         stockNo : {type: Number, required: false},
         indoorSrNo : {type: String ,required: false},
         outdoorSrNo : {type: String ,required: false},
-        weight: {type: Number ,required: false},
+        weight: {type: Float ,required: false},
         unitIndoorNo : {type: String ,required: false},
         unitOutdoorNo : {type: String ,required: false},
         clientPhoneNo : {type: Number ,default : null},

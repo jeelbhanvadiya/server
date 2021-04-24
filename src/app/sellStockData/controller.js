@@ -13,7 +13,7 @@ function getCurrentYear() {
 
 exports.createSellStock = async (req, res) => {
     try {
-        const {clientPhoneNo, stock} = req.body;
+        const { clientPhoneNo, stock } = req.body;
         const year = getCurrentYear();
         const data = await sellStock.aggregate([{$count: "sellStock"}]);
         let count = 1;
@@ -34,7 +34,7 @@ exports.createSellStock = async (req, res) => {
                 }
             });
             if (update && update.ok) {
-                res.status(200).send({updated: true, message: "successfully updated"});
+                        res.status(200).send({updated: true, message: "successfully updated"});
             } else {
                 res.status(200).send({updated: false, message: "something went wrong"});
             }
@@ -114,42 +114,18 @@ exports.getSellStockStockNo = async (req, res) => {
 
 exports.searchingSellStock = async (req, res) => {
     try {
-        const data = await sellStock.find({});
-        let datalist = [];
-        if(req.query.stockNo) {
-            data.map(item => {
-                datalist = item.stock.filter(prod => prod.stockNo.toString().includes(req.query.stockNo.toString()))
-                res.status(200).send(datalist);
-            });
-        }else if (req.query.GSTNo) {
-            data.map(item => {
-                datalist = item.stock.filter(prod => prod.GSTNo.toString().includes(req.query.GSTNo.toString()))
-                res.status(200).send(datalist);
-            });
-        }else if (req.query.unitIndoorNo) {
-            data.map(item => {
-                datalist = item.stock.filter(prod => prod.unitIndoorNo.toString().includes(req.query.unitIndoorNo.toString()))
-                res.status(200).send(datalist);
-            });
-        }else if (req.query.unitOutdoorNo) {
-            data.map(item => {
-                datalist = item.stock.filter(prod => prod.unitOutdoorNo.toString().includes(req.query.unitOutdoorNo.toString()))
-                res.status(200).send(datalist);
-            });
-        } else if(req.query.clientName) {
-            // datalist = data.find(item => item.clientName.toString().includes(req.body.clientName.toString()))
-            const data = await sellStock.aggregate([
-                {$match: {clientName: {$regex:  req.query.clientName, "$options": "i"}}}
-            ]);
-            res.status(200).send(data);
-        }else if(req.query.clientPhoneNo) {
-            // datalist = data.find(item => item.clientName.toString().includes(req.body.clientName.toString()))
-            const data = await sellStock.find({});
-            datalist = data.filter(prod => prod.clientPhoneNo.toString().includes(req.query.clientPhoneNo.toString()))
-            res.status(200).send(datalist);
-        } else {
-            res.status(200).send("Not Found any data");
+        let stockData
+        let stockSearchList = ["GSTNo", "unitIndoorNo", "unitOutdoorNo", "stockNo"]
+        let keyName = Object.keys(req.query)[0]
+        if (stockSearchList.includes(Object.keys(req.query)[0])) {
+            keyName = "stock.".concat(Object.keys(req.query)[0].toString())
         }
+        if (req.query.clientPhoneNo) {
+            stockData = await sellStock.find({clientPhoneNo: Number(req.query.clientPhoneNo)})
+        } else {
+            stockData = await sellStock.find({[`${keyName}`]: {$regex: Object.values(req.query)[0], $options: 'i'}})
+        }
+        res.status(200).send(stockData)
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
     }
