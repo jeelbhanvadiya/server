@@ -122,6 +122,8 @@ exports.searchingSellStock = async (req, res) => {
         }
         if (req.query.clientPhoneNo) {
             stockData = await sellStock.find({clientPhoneNo: Number(req.query.clientPhoneNo)})
+        }else if(req.body.stockNo) {
+            stockData = await sellStock.find({"stock.stockNo": req.body.stockNo})
         } else {
             stockData = await sellStock.find({[`${keyName}`]: {$regex: Object.values(req.query)[0], $options: 'i'}})
         }
