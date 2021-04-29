@@ -85,15 +85,19 @@ exports.deleteByServiceId = async (req, res) => {
         }
         const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
         const data = isStockNO;
-        console.log(data)
         if(isStockNO) {
+            const length = data.services.length;
             await data.services.splice(-1,1);
-            console.log(data)
-            const list = await Services.findOneAndUpdate({stockNo: req.body.stockNo}, data )
-            res.status(200).send({serviceList: list , message: "successfully deleted services"});
+            if(length === 1) {
+                await Services.deleteOne({stockNo: req.body.stockNo});
+                res.status(200).send({ message: "successfully deleted service cluster"});
+            } else{
+                const list = await Services.findOneAndUpdate({stockNo: req.body.stockNo}, data )
+                res.status(200).send({serviceList: list , message: "successfully deleted services"});
+            }
         }
     } catch (err) {
-        res.status(422).send({error: "Error in getting course details"});
+        res.status(422).send({error: "Error in getting deleting service details"});
     }
 }
 
