@@ -18,6 +18,9 @@ const sellStockSchema = new Schema(
                 invoiceNo: {type: String, required: false},
                 billNo: {type: String, required: false},
                 billDate: {type: Date},
+                CrmNo: {type: Number, required: false , default : null},
+                CustomerNo: {type: Number, required: false ,default : null},
+                Date: {type: Number, required: false,default : null},
                 address: {
                     houseNo: {type: String, required: false},
                     streetName: {type: String, required: false},
