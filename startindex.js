@@ -16,6 +16,8 @@ app.use(bodyParser.json());
 app.use(customResponses);
 app.use(cors());
 
+app.use(express.static(__dirname + '/'));
+
 require("./src/config/mongoose")(app);
 require("./src/app")(app);
 

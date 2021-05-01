@@ -59,7 +59,7 @@ exports.updateService = async (req, res) => {
     try {
         const list = await Services.findOne({stockNo: req.body.stockNo});
         if (list) {
-            list.services.map(item => {
+                list.services.map(item => {
                 if (item.serviceCompleteStatus === false) {
                     item.serviceCompleteStatus = true
                 }
@@ -114,8 +114,11 @@ exports.uploadSignImage = async (req, res) => {
     try {
         const pathName = 'signImages/' + req.file.originalname;
         if (pathName) {
-            const editedCompany = await Services.updateOne({_id: ObjectId(req.params.id)}, {$set: {signatureImgUrl: pathName}});
-            res.success(editedCompany);
+            await Services.updateOne({
+                stockNo: req.body.stockNo,
+                "services.serviceCompleteStatus": true
+            }, {$set: {"services.$.signatureImgUrl": pathName}})
+            res.success(pathName);
         } else {
             res.success({success: "failed", message: "something went wrong"});
         }
