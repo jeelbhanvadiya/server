@@ -122,8 +122,16 @@ exports.searchingSellStock = async (req, res) => {
         }
         if (req.query.clientPhoneNo) {
             stockData = await sellStock.find({clientPhoneNo: Number(req.query.clientPhoneNo)})
-        }else if(req.query.stockNo) {
-            stockData = await sellStock.find({"stock.stockNo": req.query.stockNo})
+        } else if (req.query.stockNo) {
+            stockData = await sellStock.aggregate([
+                {
+                    $addFields: {stocks: {$map: {input: "$stock", in: {stockNo: {$toString: '$$this.stockNo'}}}}}
+                },
+                {$unwind: '$stocks'},
+                {$match: {'stocks.stockNo': new RegExp(req.query.stockNo)}},
+                {$group: {_id: 1, stocks: {$push: '$stocks'}}},
+                {$project: {stocks: 1, _id: 0}}
+                ])
         } else {
             stockData = await sellStock.find({[`${keyName}`]: {$regex: Object.values(req.query)[0], $options: 'i'}})
         }
