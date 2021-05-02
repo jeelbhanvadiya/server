@@ -65,6 +65,8 @@ exports.updateService = async (req, res) => {
                 }
             });
             list.services[list.services.length - 1].signatureImgUrl = req.body.services[0].signatureImgUrl;
+            list.services[list.services.length - 1].serviceRating = req.body.services[0].serviceRating;
+            list.services[list.services.length - 1].serviceBoyRating = req.body.services[0].serviceBoyRating;
             await Services.findOneAndUpdate({stockNo: req.body.stockNo}, list).then(data => {
                 res.status(200).send({updateList: data, message: "successfully updated services"});
             });
