@@ -13,7 +13,7 @@ function getCurrentYear() {
 
 exports.createSellStock = async (req, res) => {
     try {
-        const { clientPhoneNo, stock } = req.body;
+        const {clientPhoneNo, stock} = req.body;
         const year = getCurrentYear();
         const data = await sellStock.aggregate([{$count: "sellStock"}]);
         let count = 1;
@@ -34,7 +34,7 @@ exports.createSellStock = async (req, res) => {
                 }
             });
             if (update && update.ok) {
-                        res.status(200).send({updated: true, message: "successfully updated"});
+                res.status(200).send({updated: true, message: "successfully updated"});
             } else {
                 res.status(200).send({updated: false, message: "something went wrong"});
             }
@@ -101,7 +101,7 @@ exports.getSellStockStockNo = async (req, res) => {
         data.map(item => {
             datalist = item.stock.find(prod => Number(prod.stockNo) === Number(req.params.stockno))
         });
-        if(datalist) {
+        if (datalist) {
             res.status(200).send(datalist);
         } else {
             res.status(200).send("Not Found any data");
@@ -131,7 +131,7 @@ exports.searchingSellStock = async (req, res) => {
                 {$match: {'stocks.stockNo': new RegExp(req.query.stockNo)}},
                 {$group: {_id: 1, stocks: {$push: '$stocks'}}},
                 {$project: {stocks: 1, _id: 0}}
-                ])
+            ])
         } else {
             stockData = await sellStock.find({[`${keyName}`]: {$regex: Object.values(req.query)[0], $options: 'i'}})
         }
@@ -144,13 +144,18 @@ exports.searchingSellStock = async (req, res) => {
 
 exports.updateSellStock = async (req, res) => {
     try {
-        console.log(req.params.id)
-        if (req.params.id) {
-            const editedCompany = await sellStock.findByIdAndUpdate(req.params.id, req.body);
-            if (editedCompany && editedCompany._id) {
-                res.status(200).send({success: true, editedCompany});
+        if (req.params.stockno) {
+            const editedCompany = await sellStock.updateOne({"stock.stockNo": req.params.stockno}, {
+                $set: {
+                    "stock.$.CrmNo": req.body.CrmNo,
+                    'stock.$.CustomerNo': req.body.CustomerNo,
+                    'Date': req.body.Date
+                }
+            });
+            if (editedCompany && editedCompany.ok) {
+                res.status(200).send({updated: true});
             } else {
-                res.status(401).send({success: false, message: "user is not found"});
+                res.status(200).send({updated: false, message: "something went wrong"});
             }
         } else {
             res.status(404).send({success: false, message: "Please send correct user info"});
