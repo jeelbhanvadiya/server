@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const rawMaterialStockSchema = new Schema(
     {
-        typeId: {type: Number, required: true},
+        typeId: {type: String, required: true},
         typeName: {type: String, required: true},
         gasType: {type: String, required: false},
         weight: {type: Number, required: false},
