@@ -12,7 +12,8 @@ const servicesSchema = new Schema(
                 serviceCompleteStatus: {type: Boolean, required: false , default: false},
                 Feedback: {type: Boolean , default: false},
                 signatureImgUrl: {type: String ,default:null},
-                serviceDate : {type: String},
+                serviceDate : {type: Date,default : null},
+                completeDate : {type: Date,default : null},
                 serviceRating: {type:Number, default:0},
                 serviceBoyRating : {type:Number ,default : 0}
             }
