@@ -149,7 +149,7 @@ exports.updateSellStock = async (req, res) => {
                 $set: {
                     "stock.$.CrmNo": req.body.CrmNo,
                     'stock.$.CustomerNo': req.body.CustomerNo,
-                    'Date': req.body.Date
+                    'stock.$.Date': req.body.Date
                 }
             });
             if (editedCompany && editedCompany.ok) {
