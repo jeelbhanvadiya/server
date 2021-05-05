@@ -149,8 +149,8 @@ exports.searchingSellStock = async (req, res) => {
 
 exports.updateSellStock = async (req, res) => {
     try {
-        if (req.params.stockno) {
-            const editedCompany = await sellStock.updateOne({"stock.stockNo": req.params.stockno}, {
+        if (req.body.stockNo) {
+            const editedCompany = await sellStock.updateOne({"stock.stockNo": req.body.stockNo}, {
                 $set: {
                     "stock.$.CrmNo": req.body.CrmNo,
                     'stock.$.CustomerNo': req.body.CustomerNo,
@@ -158,6 +158,7 @@ exports.updateSellStock = async (req, res) => {
                 }
             });
             if (editedCompany && editedCompany.ok) {
+             await stockModal.updateOne({stockNo : req.body.stockNo},{$set : {crmStatus: true}})
                 res.status(200).send({updated: true});
             } else {
                 res.status(200).send({updated: false, message: "something went wrong"});

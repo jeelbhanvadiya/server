@@ -4,8 +4,9 @@ const Schema = mongoose.Schema;
 const stockSchema = new Schema(
     {
         sell : {type: Boolean , default: false},
-        stockNo : {type: Number, required: false},
+        stockNo : {type: String, required: false},
         indoorSrNo : {type: String ,required: false},
+        crmStatus : {type: Boolean ,required: false, default: false},
         outdoorSrNo : {type: String ,required: false},
         weight: {type: Number ,required: false},
         unitIndoorNo : {type: String ,required: false},
