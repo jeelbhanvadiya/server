@@ -8,7 +8,7 @@ const sellStockSchema = new Schema(
         clientName: {type: String, required: false},
         stock: [
             {
-                stockNo: {type: Number, required: true},
+                stockNo: {type: String, required: true},
                 price: {type: Number, required: false},
                 sellDate: {type: Date, required: false},
                 GSTNo: {type: String, required: false},
