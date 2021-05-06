@@ -5,7 +5,7 @@ const remainingRawMaterial = mongoose.model("remainingRawMaterial");
 exports.createData = async (req, res) => {
     try {
         const create = await sellRawMatirialStock.create(req.body);
-        const update = await remainingRawMaterial.updateOne({typeId: req.body.typeId},
+        const update = await remainingRawMaterial.updateOne({typeId: req.body.typeId.toString()},
             {$inc: {weight: -req.body.weight,piece : -req.body.piece,length: -req.body.length}});
         res.status(200).send(create)
     }catch (err) {

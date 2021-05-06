@@ -21,7 +21,7 @@ exports.getRemainingRawMaterialData = async (req, res) => {
 
 exports.getByTypeId = async (req, res) => {
     try {
-        const data = await remainingRawMaterial.findOne({typeId :req.params.id});
+        const data = await remainingRawMaterial.findOne({typeId :req.params.id.toString()});
         res.status(200).send(data);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while finding data."});

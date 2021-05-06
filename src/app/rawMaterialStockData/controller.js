@@ -6,9 +6,9 @@ exports.createMaterialData = async (req, res) => {
     try {
         const create = await rawMaterial.create(req.body);
         if (create && create._id) {
-            const isExist = await remainingRawMaterial.findOne({typeId: req.body.typeId})
+            const isExist = await remainingRawMaterial.findOne({typeId: req.body.typeId.toString()})
             if (isExist && isExist._id) {
-                const update = await remainingRawMaterial.updateOne({typeId: req.body.typeId},
+                const update = await remainingRawMaterial.updateOne({typeId: req.body.typeId.toString()},
                     {$inc: {weight: req.body.weight,piece : req.body.piece,length:req.body.length}});
                 if (update && update.ok) {
                     res.status(200).send({success: true})
@@ -46,7 +46,7 @@ exports.updateRawMaterialData = async (req, res) => {
 exports.deleteRawMaterialData = async (req, res) => {
     try {
         const data = req.body
-        await remainingRawMaterial.updateOne({typeId: req.body.typeId},
+        await remainingRawMaterial.updateOne({typeId: req.body.typeId.toString()},
             {$inc: {weight: -data && data.weight || 0, piece : -data && data.piece || 0 , length: -data && data.length || 0}});
         res.status(200).send({message:"success"});
     } catch (err) {

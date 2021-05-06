@@ -52,6 +52,15 @@ exports.create = async (req, res) => {
     });
 };
 
+exports.deleteUser = async (req, res) => {
+    try {
+        await Users.findByIdAndDelete({_id: req.params.id})
+        res.status(200).send("success");
+    } catch(err) {
+        res.status(422).send({error: "Error in deleting user"});
+    }
+}
+
 exports.login = (req, res) => {
     Users.findOne({email: req.body.email})
         .then(login => {

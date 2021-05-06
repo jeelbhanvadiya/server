@@ -20,4 +20,6 @@ router.get( "/getservicemanlist", controller.findAllServiceManList );
 
 router.get( "/getmanagerlist", controller.findAllManagerList );
 
+router.delete("/delete/:id", controller.deleteUser);
+
 module.exports = router;
