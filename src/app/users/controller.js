@@ -15,9 +15,9 @@ exports.getList = async (req, res) => {
 
 exports.edit = async (req, res) => {
     try {
-        if (req.body.id) {
-            const editedUser = await Users.findByIdAndUpdate(req.body.id, req.body);
-            if (editedUser && editedUser._id) {
+        if (req.params.email) {
+            const editedUser = await Users.updateOne( {email : req.params.email}, req.body);
+            if (editedUser) {
                 res.send({success: true, editedUser});
             } else {
                 res.send({success: false, message: "user is not found"});
@@ -37,7 +37,6 @@ exports.create = async (req, res) => {
         });
     }
     const findUser = await Users.findOne({email: req.body.email});
-    console.log(findUser)
     if(findUser && findUser._id){
         return res.send({message: "This user is already exist"});
     }
@@ -61,22 +60,22 @@ exports.deleteUser = async (req, res) => {
     }
 }
 
-exports.login = (req, res) => {
-    Users.findOne({email: req.body.email})
+exports.login =  (req, res) => {
+     const user = Users.findOne({email: req.body.email ,active: true})
         .then(login => {
             const success = "Successfully Login";
             const isMatch = bcrypt.compareSync(req.body.password, login.password); // true
             if (isMatch) {
-                let token = jwt.sign({_id: login._id, email: req.body.email}, "superSuperSecret", {
-                    expiresIn: 3600
-                });
-                res.status(200).send({users: true, token: token, login: login,success :success});
+                    let token = jwt.sign({_id: login._id, email: req.body.email}, "superSuperSecret", {
+                        expiresIn: 3600
+                    });
+                    res.status(200).send({users: true, token: token, login: login,success :success});
             } else {
                 res.status(500).send({message: "Password is not match"});
             }
         }).catch(err => {
         res.send({
-            message: err.message || "Some error occurred while retrieving login."
+            message: "Some error occurred while retrieving login. or User Un Authorized"
         });
     });
 };

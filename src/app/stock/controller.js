@@ -34,11 +34,11 @@ exports.getStock = async (req, res) => {
 
 exports.filterBySellData = async (req, res) => {
     try {
-        const { sell } = req.body
+        const { sell } = req.body;
         if(!req.body){
             return res.status(200).send({message: "Please pass the valid data"});
         }
-        const stock = await Stock.find({sell: sell});
+        const stock = await Stock.find(req.body);
         res.status(200).send(stock);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while retrieving login."});

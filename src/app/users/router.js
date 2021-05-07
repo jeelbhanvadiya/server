@@ -12,7 +12,7 @@ router.post( "/signup", controller.create );
 
 router.post( "/login", controller.login );
 
-router.put( "/edit-profile", validateToken, controller.edit );
+router.put( "/edit-profile/:email", controller.edit );
 
 router.post( "/forgot-password", controller.forgetPassword );
 

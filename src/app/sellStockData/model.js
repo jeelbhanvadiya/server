@@ -11,6 +11,8 @@ const sellStockSchema = new Schema(
                 stockNo: {type: String, required: true},
                 price: {type: Number, required: false},
                 sellDate: {type: Date, required: false},
+                billingDate : {type: Date, required: false ,default: null},
+                fittingDate : {type: Date, required: false ,default: null},
                 GSTNo: {type: String, required: false},
                 clientCompanyName: {type: String, required: false},
                 unitIndoorNo : {type: String ,required: false},

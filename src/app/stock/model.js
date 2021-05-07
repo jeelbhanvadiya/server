@@ -7,6 +7,7 @@ const stockSchema = new Schema(
         stockNo : {type: String, required: false},
         indoorSrNo : {type: String ,required: false},
         crmStatus : {type: Boolean ,required: false, default: false},
+        isDeleted : {type: Boolean ,required: false, default: false},
         outdoorSrNo : {type: String ,required: false},
         weight: {type: Number ,required: false},
         unitIndoorNo : {type: String ,required: false},
