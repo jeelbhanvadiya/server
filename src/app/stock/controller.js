@@ -92,6 +92,23 @@ exports.updateStock = async (req, res) => {
     }
 };
 
+exports.editStock = async (req, res) => {
+    try {
+        if (req.params.stockNo) {
+            const editedStock = await Stock.updateOne( {stockNo : req.params.stockNo}, req.body);
+            if (editedStock) {
+                res.send({success: true, editedStock});
+            } else {
+                res.send({success: false, message: "stock no is not found"});
+            }
+        } else {
+            res.send({success: false, message: "Please send correct stock info"});
+        }
+    } catch (err) {
+        res.send(err);
+    }
+};
+
 exports.deleteStock = async (req, res) => {
     try {
         await Stock.deleteOne({_id: req.params.id})

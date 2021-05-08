@@ -13,6 +13,8 @@ router.get("/getstockno/:stockno", controller.getStockNoWise);
 
 router.put("/update/:id", controller.updateStock);
 
+router.put("/edit/:stockNo", controller.editStock);
+
 router.delete("/delete/:id", controller.deleteStock);
 
 router.post("/filter", controller.filterStockData);

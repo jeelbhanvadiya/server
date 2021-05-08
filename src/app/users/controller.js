@@ -116,6 +116,42 @@ exports.forgetPassword = async (req, res) => {
     }
 };
 
+exports.changePassword = (req, res) => {
+    const token = req.body.token || req.query.token || req.headers.authorization;
+    if (token) {
+        return jwt.verify(token, "superSuperSecret", function (err, decoded) {
+            if (err) {
+                logger.error(err);
+                return res.json({
+                    success: false,
+                    message: "Failed to authenticate token.",
+                });
+            } else {
+                Users.findOne({_id: decoded._id})
+                    .then(login => {
+                        const isMatch = bcrypt.compareSync(req.body.password, login.password); // true
+                        if (isMatch) {
+                            req.body.new = bcrypt.hashSync(req.body.new, 8);
+                            Users.findByIdAndUpdate({_id: decoded._id}, {$set: {password: req.body.new}})
+                                .then(users => {
+                                    return res.send(users);
+                                }).catch(err => {
+                                res.status(500).send({
+                                    message: "The user is not available"
+                                });
+                            });
+                        } else {
+                            res.status(500).send({message: "your Current password is not match"});
+                        }
+                    });
+            }
+        })
+
+    } else {
+        return res.unauthorized();
+    }
+};
+
 exports.findAllServiceManList = async (req, res) => {
     const servicemanList = await Users.find({role: 'serviceman'});
     if(servicemanList && servicemanList.length){
