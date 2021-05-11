@@ -132,7 +132,9 @@ exports.searchingSellStock = async (req, res) => {
                                 as: "item",
                                 cond: { $eq: [ "$$item.stockNo", req.query.stockNo ] }
                             }
-                        }
+                        },
+                        clientName: 1,
+                        clientPhoneNo: 1
                     }
                 }
             ])
