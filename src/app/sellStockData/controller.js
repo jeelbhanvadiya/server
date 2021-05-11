@@ -126,7 +126,7 @@ exports.searchingSellStock = async (req, res) => {
             const updatedStockData = await sellStock.aggregate([
                 {
                     $project: {
-                        items: {
+                        stock: {
                             $filter: {
                                 input: "$stock",
                                 as: "item",
@@ -138,7 +138,7 @@ exports.searchingSellStock = async (req, res) => {
                     }
                 }
             ])
-            stockData = updatedStockData.filter(stock => stock.items.length > 0) || []
+            stockData = updatedStockData.filter(stock => stock.stock.length > 0) || []
         } else {
             stockData = await sellStock.find({[`${keyName}`]: {$regex: Object.values(req.query)[0], $options: 'i'}})
         }
