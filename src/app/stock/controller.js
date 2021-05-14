@@ -1,29 +1,27 @@
 const mongoose = require("mongoose");
 const commanFun = require('../../commanFun/index')
 const Stock = mongoose.model("stock");
-
+const acData = mongoose.model("acData");
 function getNumber(num, targetLength) {
     return num.toString().padStart(targetLength, 0);
 }
 
-function getCurrentYear() {
-    return new Date().getFullYear()
-}
-
 exports.createStock = async (req, res) => {
-    const year = getCurrentYear();
     try {
         if (!req.body) {
             return res.status(400).send({
                 message: "Users content can not be empty"
             });
         }
+        const accData =await acData.find({});
         const data = await Stock.aggregate([{$count: "stock"}]);
         let count = 1;
         if (data && data.length > 0 && data[0].stock) {
             count = data[0].stock + 1
         }
-            req.body.stockNo = `${year}${getNumber(count, 5)}`
+        req.body.forEach((item,index) => {
+            item.stockNo = `${accData[0].stockNo}${getNumber(count + index, 5)}`
+        })
             Stock.create(req.body)
                 .then(stock => {
                     res.status(200).send({stock, message: "successfully Created stock"});

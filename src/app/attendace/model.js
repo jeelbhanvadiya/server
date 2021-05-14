@@ -6,7 +6,7 @@ const attendanceSchema = new Schema(
     {
         // attendanceCount: attendaceList.length,
         description: {type: String, required: false},
-        attendanceList: {type : Object}
+        attendanceList: { type: Object }
     },
     {
             timestamps: true,
