@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const attendance = mongoose.model("attendanceSchema");
+const attendance = mongoose.model("attendances");
 
 exports.creatAttendance = async (req, res) => {
     try {
@@ -45,10 +45,39 @@ exports.creatAttendance = async (req, res) => {
 
 exports.getAttendance = async (req, res) => {
     try {
-        const data = await attendance.find({});
+     const { name } = req.query
+        const data = await attendance.aggregate([
+            {
+                $project: {
+                    _id: 1,
+                    tasks: {
+                        $objectToArray: "$attendanceList"
+                    }
+                }
+            },
+            {
+                $project: {
+                    dates: {
+                        $arrayToObject: {
+                            $map: {
+                                input: "$tasks",
+                                in: {
+                                    "k": "$$this.k",
+                                    "v": `$$this.v.employeeAttendance.${name}`
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]);
         res.status(200).send(data);
     } catch (err) {
-        res.status(500).send({message: err.message || "Some error occurred while getting data."});
+        if(err.message === "$arrayToObject requires an object keys of 'k' and 'v'. Found incorrect number of keys:1"){
+            res.status(500).send({message: "employee is not found"});
+        }else {
+            res.status(500).send({message: err.message || "Some error occurred while getting data."});
+        }
     }
 };
 

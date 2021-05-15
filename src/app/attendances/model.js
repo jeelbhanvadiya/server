@@ -12,5 +12,5 @@ const attendanceSchema = new Schema(
     }
 );
 
-module.exports = mongoose.model("attendanceSchema", attendanceSchema);
+module.exports = mongoose.model("attendances", attendanceSchema);
 

@@ -7,7 +7,7 @@ const router = express.Router( );
 
 router.post( "/create", controller.creatAttendance );
 
-router.get("/get", controller.getAttendance);
+router.get("/get/", controller.getAttendance);
 
 router.put("/update-attendance/", controller.updateAttendance);
 
