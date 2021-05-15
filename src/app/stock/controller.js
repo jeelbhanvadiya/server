@@ -26,7 +26,7 @@ exports.createStock = async (req, res) => {
         (req.body || []).forEach((item, index) => {
             item.stockNo = `${accData[0].stockNo}${getNumber(count + index, 5)}`
         })
-        Stock.create(req.body)
+        await Stock.insertMany(req.body)
             .then(stock => {
                 res.status(200).send({stock, message: "successfully Created stock"});
             }).catch(err => {
