@@ -9,7 +9,7 @@ router.post( "/create", controller.creatAttendance );
 
 router.get("/get", controller.getAttendance);
 
-router.put("/update/:id", controller.updateAttendance);
+router.put("/update-attendance/", controller.updateAttendance);
 
 router.delete("/delete/:id", controller.deleteAttendance);
 

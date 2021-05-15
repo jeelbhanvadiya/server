@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 
 const attendanceSchema = new Schema(
     {
-        // attendanceCount: attendaceList.length,
         description: {type: String, required: false},
         attendanceList: { type: Object }
     },

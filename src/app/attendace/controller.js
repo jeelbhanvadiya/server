@@ -16,11 +16,11 @@ exports.creatAttendance = async (req, res) => {
         }
         const isExist = await attendance.find({})
         if (isExist && isExist.length > 0) {
-            let values = {attendanceList: {}}
+            let values = {}
             Object.keys(req.body.attendanceList).forEach((key) => {
-                values['attendanceList'][key] = req.body.attendanceList[key]
+                values[`attendanceList.${key}`]= req.body.attendanceList[key]
             })
-            const data = await attendance.updateOne({_id: isExist[0]._id}, {$set: values})
+            const data = await attendance.updateOne({_id: isExist[0]._id},{$set: values})
             if (data && data.ok) {
                 res.status(500).send({updated: true});
             } else {
@@ -53,7 +53,24 @@ exports.getAttendance = async (req, res) => {
 };
 
 exports.updateAttendance = async (req, res) => {
-
+    const { date, empName } = req.query
+    const query = `attendanceList.${date.trim()}.employeeAttendance.${empName}`
+    const data = await attendance.findOne({})
+    if(data.attendanceList[date]){
+        const valueOfEmp  = data.attendanceList[date] && data.attendanceList[date].employeeAttendance[empName]
+        const updated = await attendance.updateMany({_id: data._id},{$set: {[query] : !valueOfEmp}})
+        if (updated && updated.ok) {
+            res.status(500).send({updated: true});
+        } else {
+            res.status(500).send({
+                message: "Some error occurred while updating the Attendance."
+            });
+        }
+    }else {
+        res.status(500).send({
+            message: "Date is not found."
+        });
+    }
 };
 
 exports.deleteAttendance = async (req, res) => {
