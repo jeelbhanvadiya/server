@@ -2,34 +2,38 @@ const mongoose = require("mongoose");
 const commanFun = require('../../commanFun/index')
 const Stock = mongoose.model("stock");
 const acData = mongoose.model("acData");
+
 function getNumber(num, targetLength) {
     return num.toString().padStart(targetLength, 0);
 }
 
 exports.createStock = async (req, res) => {
     try {
-        if (!req.body) {
+        if (!req.body || req.body.length < 0) {
             return res.status(400).send({
-                message: "Users content can not be empty"
+                message: "content can not be empty"
             });
         }
-        const accData =await acData.find({});
-        const data = await Stock.aggregate([{$count: "stock"}]);
+        const accData = await acData.find({});
+        const isExistData = await Stock.aggregate([
+            {$project: {yearSubstring: {$substr: ["$stockNo", 0, 4]}},},
+            {$match: {yearSubstring: accData[0].stockNo.toString()}},
+        ]);
         let count = 1;
-        if (data && data.length > 0 && data[0].stock) {
-            count = data[0].stock + 1
+        if (isExistData && isExistData.length > 0) {
+            count = isExistData.length + 1
         }
-        req.body.forEach((item,index) => {
+        (req.body || []).forEach((item, index) => {
             item.stockNo = `${accData[0].stockNo}${getNumber(count + index, 5)}`
         })
-            Stock.create(req.body)
-                .then(stock => {
-                    res.status(200).send({stock, message: "successfully Created stock"});
-                }).catch(err => {
-                res.status(500).send({
-                    message: err.message || "Some error occurred while creating the users."
-                });
+        Stock.create(req.body)
+            .then(stock => {
+                res.status(200).send({stock, message: "successfully Created stock"});
+            }).catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while creating the users."
             });
+        });
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while creating stock."});
     }
@@ -47,8 +51,8 @@ exports.getStock = async (req, res) => {
 
 exports.filterBySellData = async (req, res) => {
     try {
-        const { sell } = req.body;
-        if(!req.body){
+        const {sell} = req.body;
+        if (!req.body) {
             return res.status(200).send({message: "Please pass the valid data"});
         }
         const stock = await Stock.find(req.body);
@@ -108,7 +112,7 @@ exports.updateStock = async (req, res) => {
 exports.editStock = async (req, res) => {
     try {
         if (req.params.stockNo) {
-            const editedStock = await Stock.updateOne( {stockNo : req.params.stockNo}, req.body);
+            const editedStock = await Stock.updateOne({stockNo: req.params.stockNo}, req.body);
             if (editedStock) {
                 res.send({success: true, editedStock});
             } else {
