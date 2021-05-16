@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const Users = mongoose.model("users");
+require('dotenv').config()
 
 exports.getList = async (req, res) => {
     try {
@@ -36,7 +37,7 @@ exports.create = async (req, res) => {
             message: "Users content can not be empty"
         });
     }
-    const findUser = await Users.findOne({email: req.body.email});
+    const findUser = await Users.findOne({email: req.body.email.trim()});
     if(findUser && findUser._id){
         return res.send({message: "This user is already exist"});
     }
@@ -61,7 +62,7 @@ exports.deleteUser = async (req, res) => {
 }
 
 exports.login =  (req, res) => {
-     const user = Users.findOne({email: req.body.email ,active: true})
+     const user = Users.findOne({email: req.body.email.trim() ,active: true})
         .then(login => {
             const success = "Successfully Login";
             const isMatch = bcrypt.compareSync(req.body.password, login.password); // true
@@ -89,15 +90,15 @@ exports.forgetPassword = async (req, res) => {
     let mailTransporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'jeel.bvminfotech@gmail.com',
-            pass: ''
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD
         }
     });
 
-    const userDetails = await Users.findOne({email: req.body.email})
+    const userDetails = await Users.findOne({email: req.body.email.trim().toString()})
     if (userDetails && userDetails._id) {
         let mailDetails = {
-            from: 'jeel.bvminfotech@gmail.com',
+            from: process.env.EMAIL,
             to: userDetails.email,
             subject: "Your Forgotton Password", // Subject line
             text: "Your Forgotton Password", // plain text body
