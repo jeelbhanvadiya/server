@@ -9,6 +9,8 @@ router.post( "/create", controller.creatAttendance );
 
 router.get("/get/", controller.getAttendance);
 
+router.get("/getall", controller.getAllAttendance);
+
 router.put("/update-attendance/", controller.updateAttendance);
 
 router.delete("/delete/:id", controller.deleteAttendance);

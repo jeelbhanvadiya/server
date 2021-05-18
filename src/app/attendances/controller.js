@@ -81,6 +81,15 @@ exports.getAttendance = async (req, res) => {
     }
 };
 
+exports.getAllAttendance = async (req, res) => {
+    try {
+        const stock = await attendance.find({});
+        res.status(200).send(stock);
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+    }
+};
+
 exports.updateAttendance = async (req, res) => {
     const { date, empName } = req.query
     const query = `attendanceList.${date.trim()}.employeeAttendance.${empName}`
