@@ -15,7 +15,8 @@ const servicesSchema = new Schema(
                 serviceDate : {type: Date,default : null},
                 completeDate : {type: Date,default : null},
                 serviceRating: {type:Number, default:0},
-                serviceBoyRating : {type:Number ,default : 0}
+                serviceBoyRating : {type:Number ,default : 0},
+                remarks : {type:String ,required : false},
             }
         ],
     },
