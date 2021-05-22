@@ -19,4 +19,6 @@ router.post("/:stockno", controller.getSellStockStockNo);
 
 router.get("/searching/", controller.searchingSellStock);
 
+router.put("/update-sell-data", controller.updateSellData);
+
 module.exports = router;

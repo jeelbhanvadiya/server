@@ -173,6 +173,23 @@ exports.updateSellStock = async (req, res) => {
     }
 };
 
+exports.updateSellData = async (req, res) => {
+    try {
+        if (req.body && req.body.stock) {
+            const updated = await sellStock.updateOne({"stock.stockNo": req.body.stock.stockNo}, req.body);
+            if (updated && updated.ok) {
+                res.status(200).send({updated: true});
+            } else {
+                res.status(200).send({updated: false, message: "something went wrong"});
+            }
+        } else {
+            res.status(404).send({success: false, message: "Please send correct data"});
+        }
+    } catch (err) {
+        res.send(err);
+    }
+};
+
 exports.deleteSellStock = async (req, res) => {
     try {
         await sellStock.deleteOne({_id: req.params.id})
