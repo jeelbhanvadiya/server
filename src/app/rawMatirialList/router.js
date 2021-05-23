@@ -15,4 +15,6 @@ router.put("/update-types/", controller.updateType);
 
 router.delete("/delete/:id", controller.deleteType);
 
+router.put("/updatesubtype/", controller.updateSubType);
+
 module.exports = router;

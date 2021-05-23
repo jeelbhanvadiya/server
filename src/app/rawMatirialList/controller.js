@@ -5,7 +5,9 @@ const rawmatiriallist = mongoose.model("rawmatiriallist");
 const checkAndAddSubType = (list) => {
     Object.keys(list).map((type) => {
         if(list[type] && list[type].hasSubTypes){
-            list[type].subTypes = []
+            if(!list[type].subTypes.length){
+                list[type].subTypes = []
+            }
         }
     })
 }
@@ -126,6 +128,21 @@ exports.deleteType = async (req, res) => {
     try {
         await rawmatiriallist.deleteOne({_id: req.params.id})
         res.status(200).send("success");
+    } catch (err) {
+        res.status(422).send({error: "Error in deleting data"});
+    }
+}
+
+
+exports.updateSubType = async (req, res) => {
+    try {
+        const {type, value} = req.query
+        const key = `materialList.${type}.subTypes`
+        await rawmatiriallist.updateOne(
+            {},
+            { $pull: { [key]: { $in: [ value ] } } }
+        )
+        res.status(200).send({update : true});
     } catch (err) {
         res.status(422).send({error: "Error in deleting data"});
     }
