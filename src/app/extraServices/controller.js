@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId
-const Services = mongoose.model("services");
+const Services = mongoose.model("extraservices");
 const Users = mongoose.model("users");
 const commanFun = require('../../commanFun/index')
 
@@ -12,8 +12,8 @@ exports.createServices = async (req, res) => {
             });
         }
         // const isExist = await Users.findOne({firstName: req.body.name})
-        const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
-            if (!isStockNO) {
+        const isPhoneNumber = await Services.findOne({phoneNumber: req.body.phoneNumber});
+            if (!isPhoneNumber) {
                 Services.create(req.body)
                     .then(SellStock => {
                         res.status(200).send({SellStock, message: "successfully Created services"});
@@ -23,9 +23,9 @@ exports.createServices = async (req, res) => {
                     });
                 })
             } else {
-                    if(isStockNO.services[isStockNO.services.length - 1].serviceCompleteStatus === true){
-                        isStockNO.services.push(req.body.services[0]);
-                        await Services.findOneAndUpdate({stockNo: req.body.stockNo}, isStockNO).then(data => {
+                    if(isPhoneNumber.services[isPhoneNumber.services.length - 1].serviceCompleteStatus === true){
+                        isPhoneNumber.services.push(req.body.services[0]);
+                        await Services.findOneAndUpdate({phoneNumber: req.body.phoneNumber}, isPhoneNumber).then(data => {
                             res.status(200).send({updateList: data , message: "successfully updated services"});
                         });
                     }else {
@@ -48,7 +48,7 @@ exports.getServiceData = async (req, res) => {
 
 exports.getServicesStockNo = async (req, res) => {
     try {
-        const SellStock = await Services.findOne({stockNo: req.params.id});
+        const SellStock = await Services.findOne({phoneNumber: req.params.id});
         res.status(200).send(SellStock.services);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
@@ -57,7 +57,7 @@ exports.getServicesStockNo = async (req, res) => {
 
 exports.updateService = async (req, res) => {
     try {
-        const list = await Services.findOne({stockNo: req.body.stockNo});
+        const list = await Services.findOne({phoneNumber: req.body.phoneNumber});
         if (list) {
                 list.services.map(item => {
                 if (item.serviceCompleteStatus === false) {
@@ -68,7 +68,7 @@ exports.updateService = async (req, res) => {
             list.services[list.services.length - 1].serviceRating = req.body.services[0].serviceRating;
             list.services[list.services.length - 1].serviceBoyRating = req.body.services[0].serviceBoyRating;
             list.services[list.services.length - 1].completeDate = req.body.services[0].completeDate;
-            await Services.findOneAndUpdate({stockNo: req.body.stockNo}, list).then(data => {
+            await Services.findOneAndUpdate({phoneNumber: req.body.phoneNumber}, list).then(data => {
                 res.status(200).send({updateList: data, message: "successfully updated services"});
             });
         }else {
@@ -83,19 +83,19 @@ exports.deleteByServiceId = async (req, res) => {
     try {
         if (!req.body) {
             return res.status(400).send({
-                message: "please pass stockno and service id, it can not be empty"
+                message: "please pass phoneNumber and service id, it can not be empty"
             });
         }
-        const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
-        const data = isStockNO;
-        if(isStockNO) {
+        const isPhoneNumber = await Services.findOne({phoneNumber: req.body.phoneNumber});
+        const data = isPhoneNumber;
+        if(isPhoneNumber) {
             const length = data.services.length;
             await data.services.splice(-1,1);
             if(length === 1) {
-                await Services.deleteOne({stockNo: req.body.stockNo});
+                await Services.deleteOne({phoneNumber: req.body.phoneNumber});
                 res.status(200).send({ message: "successfully deleted service cluster"});
             } else{
-                const list = await Services.findOneAndUpdate({stockNo: req.body.stockNo}, data )
+                const list = await Services.findOneAndUpdate({phoneNumber: req.body.phoneNumber}, data )
                 res.status(200).send({serviceList: list , message: "successfully deleted services"});
             }
         }
@@ -118,7 +118,7 @@ exports.uploadSignImage = async (req, res) => {
         const pathName = 'signImages/' + req.file.originalname;
         if (pathName) {
             await Services.updateOne({
-                stockNo: req.body.stockNo,
+                phoneNumber: req.body.phoneNumber,
                 "services.serviceCompleteStatus": true
             }, {$set: {"services.$.signatureImgUrl": pathName}})
             res.success(pathName);
@@ -143,7 +143,7 @@ exports.filterData = async (req, res) => {
                         $project:
                             {
                                 month: {$month: '$serviceDate'},
-                                stockNo: 1,
+                                phoneNumber: 1,
                                 serviceDate: 1,
                                 serviceManId: 1,
                                 serviceCompleteStatus: 1,
@@ -162,7 +162,7 @@ exports.filterData = async (req, res) => {
                         $project:
                             {
                                 year: {$year: '$serviceDate'},
-                                stockNo: 1,
+                                phoneNumber: 1,
                                 serviceDate: 1,
                                 serviceManId: 1,
                                 serviceCompleteStatus: 1,
@@ -181,7 +181,7 @@ exports.filterData = async (req, res) => {
                         $project:
                             {
                                 week: {$week: '$serviceDate'},
-                                stockNo: 1,
+                                phoneNumber: 1,
                                 serviceDate: 1,
                                 serviceManId: 1,
                                 serviceCompleteStatus: 1,
@@ -203,7 +203,7 @@ exports.filterData = async (req, res) => {
 exports.serviceMainIdUpdate = async (req, res) => {
     try {
         await Services.updateOne({
-            stockNo: req.body.stockNo,
+            phoneNumber: req.body.phoneNumber,
             "services._id": ObjectId(req.body.serviceId)
         }, {$set: {"services.$.serviceManId": ObjectId(req.body.serviceMainId)}})
     }catch (e) {
