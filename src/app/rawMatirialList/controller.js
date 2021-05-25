@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId
 
 const rawmatiriallist = mongoose.model("rawmatiriallist");
 
@@ -10,7 +11,9 @@ const checkAndAddSubType = (list) => {
             }
         }
     })
-}
+};
+
+
 
 exports.creatType = async (req, res) => {
     try {
@@ -144,6 +147,27 @@ exports.updateSubType = async (req, res) => {
         )
         res.status(200).send({update : true});
     } catch (err) {
-        res.status(422).send({error: "Error in deleting data"});
+        res.status(422).send({error: "Error in updating data"});
     }
 }
+
+exports.addSubType = async (req,res) => {
+    try{
+        console.log(req.body.id);
+        await rawmatiriallist.updateOne({
+            _id: ObjectId(req.body.id),
+            [`materialList.${req.body.subtype}.hasSubTypes`]: true
+        }, {$push: {[`materialList.${req.body.subtype}.subTypes`]: `${req.body.subtypevalue}`}});
+        res.status(200).send("Success");
+    }catch (err) {
+        res.status(422).send({error: "Error in adding data"});
+    }
+};
+
+exports.deleteSubType = async (req,res) => {
+    try{
+
+    }catch (err) {
+        res.status(422).send({error: "Error in deleting data"});
+    }
+};

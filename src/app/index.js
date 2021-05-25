@@ -7,8 +7,10 @@ const rawMaterialRouter = require("./rawMaterialStockData/router");
 const remainingRawMaterialRouter = require("./remainingRawMaterial/router");
 const sellRawMatirialRouter = require("./sellRowMatirialStock/router");
 const acData = require("./accData/router");
+const NotificationRouter = require("./notifications/router");
 const attendance = require("./attendances/router");
 const rawMaterialTypesRouter = require("./rawMatirialList/router");
+const extraServicesRouter = require("./extraServices/router");
 
 const validateToken = require("../middlewares/validateToken");
 
@@ -25,4 +27,6 @@ module.exports = (app) => {
     app.use("/sellrawmatirial", sellRawMatirialRouter)
     app.use("/attendance", attendance)
     app.use("/rawmatiriallist", rawMaterialTypesRouter)
+    app.use("/notifications",NotificationRouter)
+    app.use("/extraServices",extraServicesRouter)
 };
