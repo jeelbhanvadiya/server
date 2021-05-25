@@ -153,10 +153,12 @@ exports.updateSubType = async (req, res) => {
 
 exports.addSubType = async (req,res) => {
     try{
+        console.log(req.body.id);
         await rawmatiriallist.updateOne({
             _id: ObjectId(req.body.id),
-            [`materialList.${req.body.subType}.hasSubTypes`]: true
-        }, {$set: {[`materialList.$${req.body.subType}.$subTypes`]: [req.body.subTypeValue]}})
+            [`materialList.${req.body.subtype}.hasSubTypes`]: true
+        }, {$push: {[`materialList.${req.body.subtype}.subTypes`]: `${req.body.subtypevalue}`}});
+        res.status(200).send("Success");
     }catch (err) {
         res.status(422).send({error: "Error in adding data"});
     }
