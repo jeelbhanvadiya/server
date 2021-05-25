@@ -149,11 +149,10 @@ exports.updateSubType = async (req, res) => {
     } catch (err) {
         res.status(422).send({error: "Error in updating data"});
     }
-}
+};
 
 exports.addSubType = async (req,res) => {
     try{
-        console.log(req.body.id);
         await rawmatiriallist.updateOne({
             _id: ObjectId(req.body.id),
             [`materialList.${req.body.subtype}.hasSubTypes`]: true
