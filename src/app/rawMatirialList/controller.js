@@ -165,8 +165,10 @@ exports.addSubType = async (req,res) => {
 
 exports.deleteSubType = async (req,res) => {
     try{
-
+        const rawMatirial = await rawmatiriallist.findOne({})
+        await rawmatiriallist.updateOne({_id: rawMatirial._id}, {$unset: {[`materialList.${req.params.id}`]: 1 }})
+        res.send("deleted successfully")
     }catch (err) {
-        res.status(422).send({error: "Error in deleting data"});
+        res.status(422).send({error: "Error in deleting deleteSubMaterialType  data"});
     }
 };
