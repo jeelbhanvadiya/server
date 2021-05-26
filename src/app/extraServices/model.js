@@ -17,7 +17,12 @@ const servicesSchema = new Schema(
                 serviceRating: {type:Number, default:0},
                 serviceBoyRating : {type:Number ,default : 0},
                 remarks : {type:String ,required : false},
-                address : {type :String ,required : false}
+                acCompany : {type:String ,required : false},
+                acType : {type:String ,required : false},
+                description : {type:String ,required : false},
+                capacity : {type:Number ,required : false},
+                rating : {type:Number ,required : false},
+                address : {type :Object ,required : false}
             }
         ],
     },
