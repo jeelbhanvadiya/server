@@ -15,9 +15,12 @@ exports.creatNotifications = async (req, res) => {
             });
         }
         const isExist = await notificationSchema.find({})
-        console.log(isExist[0].notificationList);
         if (isExist && isExist.length > 0) {
-            const data = await notificationSchema.updateOne({notificationList : isExist[0].notificationList})
+            let values = {}
+            Object.keys(req.body.notificationList).forEach((key) => {
+                values[`notificationList.${key}`]= req.body.notificationList[key]
+            })
+            const data = await notificationSchema.updateOne({},{$set: values})
             if (data && data.ok) {
                 res.status(500).send({updated: true});
             } else {
