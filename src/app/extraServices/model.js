@@ -6,11 +6,12 @@ const servicesSchema = new Schema(
     {
         phoneNumber: {type: Number},
         serviceDate: {type: Date},
+        customerName : {type : String},
         services : [
             {
                 serviceManId: {type: Schema.ObjectId, required: false},
                 serviceCompleteStatus: {type: Boolean, required: false , default: false},
-                Feedback: {type: Boolean , default: false},
+                Feedback: {type: String , default: false},
                 signatureImgUrl: {type: String ,default:null},
                 serviceDate : {type: Date,default : null},
                 completeDate : {type: Date,default : null},

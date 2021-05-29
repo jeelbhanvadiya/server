@@ -206,6 +206,7 @@ exports.serviceMainIdUpdate = async (req, res) => {
             phoneNumber: req.body.phoneNumber,
             "services._id": ObjectId(req.body.serviceId)
         }, {$set: {"services.$.serviceManId": ObjectId(req.body.serviceMainId)}})
+        res.status(200).send({success : true});
     }catch (e) {
         res.status(422).send({error: "Error in Updating ServiceMain Id"});
     }
