@@ -9,7 +9,7 @@ exports.creatAttendance = async (req, res) => {
                 message: "Data content can not be empty"
             });
         }
-        if(req.body && !req.body.attendanceList){
+        if (req.body && !req.body.attendanceList) {
             return res.status(400).send({
                 message: "Data content can not be empty"
             });
@@ -18,9 +18,9 @@ exports.creatAttendance = async (req, res) => {
         if (isExist && isExist.length > 0) {
             let values = {}
             Object.keys(req.body.attendanceList).forEach((key) => {
-                values[`attendanceList.${key}`]= req.body.attendanceList[key]
+                values[`attendanceList.${key}`] = req.body.attendanceList[key]
             })
-            const data = await attendance.updateOne({_id: isExist[0]._id},{$set: values})
+            const data = await attendance.updateOne({_id: isExist[0]._id}, {$set: values})
             if (data && data.ok) {
                 res.status(500).send({updated: true});
             } else {
@@ -45,7 +45,7 @@ exports.creatAttendance = async (req, res) => {
 
 exports.getAttendance = async (req, res) => {
     try {
-     const { name } = req.query
+        const {name} = req.query
         const data = await attendance.aggregate([
             {
                 $project: {
@@ -56,15 +56,15 @@ exports.getAttendance = async (req, res) => {
                 }
             },
             {
-                $project: {
-                    dates: {
-                        $arrayToObject: {
-                            $map: {
-                                input: "$tasks",
-                                in: {
-                                    "k": "$$this.k",
-                                    "v": `$$this.v.employeeAttendance.${name}`
-                                }
+                "$project": {
+                    "_id": 1,
+                    "data": {
+                        "$map": {
+                            "input": "$tasks",
+                            "as": "ar",
+                            in: {
+                                "date": "$$ar.k",
+                                "isPresent": `$$ar.v.employeeAttendance.${name}`
                             }
                         }
                     }
@@ -73,9 +73,9 @@ exports.getAttendance = async (req, res) => {
         ]);
         res.status(200).send(data);
     } catch (err) {
-        if(err.message === "$arrayToObject requires an object keys of 'k' and 'v'. Found incorrect number of keys:1"){
+        if (err.message === "$arrayToObject requires an object keys of 'k' and 'v'. Found incorrect number of keys:1") {
             res.status(500).send({message: "employee is not found"});
-        }else {
+        } else {
             res.status(500).send({message: err.message || "Some error occurred while getting data."});
         }
     }
@@ -91,12 +91,12 @@ exports.getAllAttendance = async (req, res) => {
 };
 
 exports.updateAttendance = async (req, res) => {
-    const { date, empName } = req.query
+    const {date, empName} = req.query
     const query = `attendanceList.${date.trim()}.employeeAttendance.${empName}`
     const data = await attendance.findOne({})
-    if(data.attendanceList[date]){
-        const valueOfEmp  = data.attendanceList[date] && data.attendanceList[date].employeeAttendance[empName]
-        const updated = await attendance.updateMany({_id: data._id},{$set: {[query] : !valueOfEmp}})
+    if (data.attendanceList[date]) {
+        const valueOfEmp = data.attendanceList[date] && data.attendanceList[date].employeeAttendance[empName]
+        const updated = await attendance.updateMany({_id: data._id}, {$set: {[query]: !valueOfEmp}})
         if (updated && updated.ok) {
             res.status(500).send({updated: true});
         } else {
@@ -104,7 +104,7 @@ exports.updateAttendance = async (req, res) => {
                 message: "Some error occurred while updating the Attendance."
             });
         }
-    }else {
+    } else {
         res.status(500).send({
             message: "Date is not found."
         });
