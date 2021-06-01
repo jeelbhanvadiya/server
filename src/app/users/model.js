@@ -14,6 +14,7 @@ const userSchema = new Schema( {
     password: {type: String, required: true},
     phoneNumber: {type: Number, required: false},
     GSTNo: {type: String, required: false},
+    profileUrl: {type: String, required: false},
     address: {
         houseNo: String,
         streetName : String,

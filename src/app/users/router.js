@@ -22,6 +22,21 @@ router.get( "/getmanagerlist", controller.findAllManagerList );
 
 router.put("/changePassword", controller.changePassword);
 
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination:function(req,file,cb){
+        cb(null,'./profileImages')
+    },
+    filename(req,file,cb){
+        cb(null,file.originalname)
+    }
+})
+
+const upload = multer({storage:storage});
+
+router.put("/uploadProfile", upload.single('file') , controller.uploadProfileImage );
+
 router.delete("/delete/:id", controller.deleteUser);
 
 module.exports = router;

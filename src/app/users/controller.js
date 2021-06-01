@@ -153,6 +153,22 @@ exports.changePassword = (req, res) => {
     }
 };
 
+exports.uploadProfileImage = async (req, res) => {
+    try {
+        const pathName = 'profileImages/' + req.file.originalname;
+        if (pathName) {
+            await Users.updateOne({
+                _id: req.body.id
+            }, {$set: {"users.$.profileUrl": pathName}})
+            res.success(pathName);
+        } else {
+            res.success({success: "failed", message: "something went wrong"});
+        }
+    } catch (err) {
+        res.send(err);
+    }
+};
+
 exports.findAllServiceManList = async (req, res) => {
     const servicemanList = await Users.find({role: 'serviceman'});
     if(servicemanList && servicemanList.length){
