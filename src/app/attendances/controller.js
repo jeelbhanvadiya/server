@@ -58,12 +58,12 @@ exports.getAttendance = async (req, res) => {
             {
                 "$project": {
                     "_id": 1,
-                    "data": {
+                    "dates": {
                         "$map": {
                             "input": "$tasks",
                             "as": "ar",
                             in: {
-                                "dates": "$$ar.k",
+                                "date": "$$ar.k",
                                 "isPresent": `$$ar.v.employeeAttendance.${name}`
                             }
                         }
