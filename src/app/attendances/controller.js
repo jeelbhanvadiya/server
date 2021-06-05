@@ -63,7 +63,7 @@ exports.getAttendance = async (req, res) => {
                             "input": "$tasks",
                             "as": "ar",
                             in: {
-                                "date": "$$ar.k",
+                                "dates": "$$ar.k",
                                 "isPresent": `$$ar.v.employeeAttendance.${name}`
                             }
                         }
