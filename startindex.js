@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const path = require("path")
 const config = require("./src/config");
 const customResponses = require("./src/middlewares/customResponses");
 const logger = require("./src/utilities/logger");
@@ -9,6 +9,13 @@ const logger = require("./src/utilities/logger");
 const app = express();
 const port = process.env.PORT || config.port;
 const ENV = process.env.NODE_ENV || config.env;
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '/src/views'))
+
+const urlencodedParser = bodyParser.urlencoded({ extended: false })
+app.use(urlencodedParser);
+app.use(bodyParser.json());
 
 app.set("env", ENV);
 

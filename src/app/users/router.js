@@ -39,4 +39,6 @@ router.put("/uploadProfile", upload.single('file') , controller.uploadProfileIma
 
 router.delete("/delete/:id", controller.deleteUser);
 
+router.get("/newPassword/:id", controller.renderHtmlForm);
+
 module.exports = router;

@@ -186,3 +186,7 @@ exports.findAllManagerList = async (req, res) => {
         return res.send({message: "No  Manager found"});
     }
 };
+
+exports.renderHtmlForm = async (req, res) => {
+    res.render("forgotpassword")
+}
