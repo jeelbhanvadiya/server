@@ -68,7 +68,7 @@ exports.login =  (req, res) => {
             const isMatch = bcrypt.compareSync(req.body.password, login.password); // true
             if (isMatch) {
                     let token = jwt.sign({_id: login._id, email: req.body.email}, "superSuperSecret", {
-                        expiresIn: 3600
+                        expiresIn: '9999 years'
                     });
                     res.status(200).send({users: true, token: token, login: login,success :success});
             } else {
