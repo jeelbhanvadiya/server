@@ -68,6 +68,7 @@ exports.updateService = async (req, res) => {
             list.services[list.services.length - 1].serviceRating = req.body.services[0].serviceRating;
             list.services[list.services.length - 1].serviceBoyRating = req.body.services[0].serviceBoyRating;
             list.services[list.services.length - 1].completeDate = req.body.services[0].completeDate;
+            list.services[list.services.length - 1].address = req.body.services[0].address;
             await Services.findOneAndUpdate({phoneNumber: req.body.phoneNumber}, list).then(data => {
                 res.status(200).send({updateList: data, message: "successfully updated services"});
             });

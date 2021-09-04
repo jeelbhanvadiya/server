@@ -23,7 +23,15 @@ const servicesSchema = new Schema(
                 description : {type:String ,required : false},
                 capacity : {type:Number ,required : false},
                 rating : {type:Number ,required : false},
-                address : {type :Object ,required : false}
+                address: {
+                    area: {type: String},
+                    city: {type: String},
+                    houseNo: {type: String},
+                    landmark: {type: String},
+                    pinCode: {type: String},
+                    state: {type: String},
+                    streetName: {type: String},
+                },
             }
         ],
     },

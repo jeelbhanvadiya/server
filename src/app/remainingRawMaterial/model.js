@@ -5,9 +5,9 @@ const Schema = mongoose.Schema;
 const remainingRawMaterialStockSchema = new Schema(
     {
         typeId: {type: String, required: true},
-        weight: {type: Number, required: false},
-        piece: {type: Number, required: false},
-        length : {type:Number,required : false}
+        weight: {type: Number, required: false, default: 0},
+        piece: {type: Number, required: false, default: 0},
+        length : {type:Number,required : false, default: 0}
     },
     {
         timestamps: true,
