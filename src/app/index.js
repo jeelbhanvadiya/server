@@ -21,7 +21,7 @@ module.exports = (app) => {
     app.use("/company",validateToken, companyRouter);
     app.use("/validatetoken", validateToken);
     app.use("/service",validateToken, servicesRouter);
-    app.use("/rawmatirial",validateToken, rawMaterialRouter);
+    app.use("/rawmatirial", rawMaterialRouter);
     app.use("/remainingRawMaterial",validateToken, remainingRawMaterialRouter);
     app.use("/ac_data",validateToken, acData)
     app.use("/sellrawmatirial",validateToken, sellRawMatirialRouter)

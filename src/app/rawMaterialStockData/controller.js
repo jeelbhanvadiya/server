@@ -45,9 +45,11 @@ exports.updateRawMaterialData = async (req, res) => {
 
 exports.deleteRawMaterialData = async (req, res) => {
     try {
-        const data = req.body
-        await remainingRawMaterial.updateOne({typeId: req.body.typeId.toString()},
-            {$inc: {weight: -data && data.weight || 0, piece : -data && data.piece || 0 , length: -data && data.length || 0}});
+        const data = req.body;
+        await remainingRawMaterial.updateOne({typeId: data.typeId.toString()},
+            {$inc: {weight: data && data.weight &&  -data.weight || 0,
+                    piece : data && data.piece && -data.piece || 0 ,
+                    length: data && data.length && -data.length || 0}});
         res.status(200).send({message:"success"});
     } catch (err) {
         res.status(422).send({error: "Some error occurred while delete stock."});
