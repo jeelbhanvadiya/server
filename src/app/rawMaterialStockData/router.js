@@ -1,5 +1,4 @@
 require( "./model" );
-require( "../remainingRawMaterial/model" );
 
 const express = require( "express" );
 
