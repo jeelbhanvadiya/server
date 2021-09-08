@@ -57,26 +57,32 @@ exports.getServicesStockNo = async (req, res) => {
 
 exports.updateService = async (req, res) => {
     try {
-        const list = await Services.findOne({phoneNumber: req.body.phoneNumber});
-        if (list) {
-                list.services.map(item => {
-                if (item.serviceCompleteStatus === false) {
-                    item.serviceCompleteStatus = true
-                }
-            });
-            list.services[list.services.length - 1].signatureImgUrl = req.body.services[0].signatureImgUrl;
-            list.services[list.services.length - 1].serviceRating = req.body.services[0].serviceRating;
-            list.services[list.services.length - 1].serviceBoyRating = req.body.services[0].serviceBoyRating;
-            list.services[list.services.length - 1].completeDate = req.body.services[0].completeDate;
-            list.services[list.services.length - 1].address = req.body.services[0].address;
-            await Services.findOneAndUpdate({phoneNumber: req.body.phoneNumber}, list).then(data => {
-                res.status(200).send({updateList: data, message: "successfully updated services"});
-            });
-        }else {
-            res.status(200).send({ message: "stock not found services"});
+        const data = req.body;
+        const {services} = data;
+        if (!services || services && !services.length) {
+            return res.status(404).send({success: false, message: "services data is missing"});
         }
+        const isUpdate = await Services.updateOne({_id: ObjectId(data.id)}, {
+            $set: {
+                "phoneNumber": data.phoneNumber,
+                "serviceDate": data.serviceDate,
+                "customerName": data.customerName,
+                'services.0.serviceCompleteStatus': services[0].serviceCompleteStatus,
+                'services.0.serviceManId': services[0].serviceManId,
+                'services.0.acCompany': services[0].acCompany,
+                'services.0.address': services[0].address,
+                'services.0.acType': services[0].acType,
+                'services.0.description': services[0].description,
+                'services.0.capacity': services[0].capacity,
+                'services.0.rating': services[0].rating,
+            }
+        });
+        if (isUpdate && isUpdate.ok) {
+            return res.status(200).send({update: true});
+        }
+        res.status(200).send({update: false, message: "Something went wrong"});
     } catch (err) {
-        res.status(404).send({success: false, message: "Please send correct info"});
+        res.status(404).send({update: false, message: "Something went wrong"});
     }
 };
 
@@ -89,15 +95,15 @@ exports.deleteByServiceId = async (req, res) => {
         }
         const isPhoneNumber = await Services.findOne({phoneNumber: req.body.phoneNumber});
         const data = isPhoneNumber;
-        if(isPhoneNumber) {
+        if (isPhoneNumber) {
             const length = data.services.length;
-            await data.services.splice(-1,1);
-            if(length === 1) {
+            await data.services.splice(-1, 1);
+            if (length === 1) {
                 await Services.deleteOne({phoneNumber: req.body.phoneNumber});
-                res.status(200).send({ message: "successfully deleted service cluster"});
-            } else{
-                const list = await Services.findOneAndUpdate({phoneNumber: req.body.phoneNumber}, data )
-                res.status(200).send({serviceList: list , message: "successfully deleted services"});
+                res.status(200).send({message: "successfully deleted service cluster"});
+            } else {
+                const list = await Services.findOneAndUpdate({phoneNumber: req.body.phoneNumber}, data)
+                res.status(200).send({serviceList: list, message: "successfully deleted services"});
             }
         }
     } catch (err) {
@@ -207,8 +213,8 @@ exports.serviceMainIdUpdate = async (req, res) => {
             phoneNumber: req.body.phoneNumber,
             "services._id": ObjectId(req.body.serviceId)
         }, {$set: {"services.$.serviceManId": ObjectId(req.body.serviceMainId)}})
-        res.status(200).send({success : true});
-    }catch (e) {
+        res.status(200).send({success: true});
+    } catch (e) {
         res.status(422).send({error: "Error in Updating ServiceMain Id"});
     }
 }
