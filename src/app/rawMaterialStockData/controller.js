@@ -45,6 +45,15 @@ exports.updateRawMaterialData = async (req, res) => {
     }
 };
 
+exports.deleteRawMaterial = async (req, res) => {
+    try {
+        await rawMaterial.deleteOne({_id: req.params.id});
+        res.status(200).send({success: true});
+    } catch (err) {
+        res.send(err);
+    }
+};
+
 exports.deleteRawMaterialData = async (req, res) => {
     try {
         const data = req.body;

@@ -7,11 +7,15 @@ exports.createData = async (req, res) => {
         const data = req.body;
         const create = await sellRawMatirialStock.create(req.body);
         await rawMaterial.updateOne({typeId: data.typeId.toString()},
-            {$inc: {weight: data && data.weight && -data.weight || 0,
-                    piece : data && data.piece && -data.piece || 0 ,
-                    length: data && data.length && -data.length || 0}});
+            {
+                $inc: {
+                    weight: data && data.weight && -data.weight || 0,
+                    piece: data && data.piece && -data.piece || 0,
+                    length: data && data.length && -data.length || 0
+                }
+            });
         res.status(200).send(create)
-    }catch (err) {
+    } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while creating data."});
     }
 };

@@ -14,4 +14,6 @@ router.put("/update/:id", controller.updateRawMaterialData);
 
 router.post("/delete", controller.deleteRawMaterialData);
 
+router.delete("/delete/:id", controller.deleteRawMaterial);
+
 module.exports = router;
