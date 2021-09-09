@@ -68,6 +68,7 @@ exports.updateService = async (req, res) => {
                 'services.0.serviceCompleteStatus': services[0].serviceCompleteStatus,
                 'services.0.serviceManId': services[0].serviceManId,
                 'services.0.address': services[0].address,
+                'services.0.remarks': services[0].remarks,
             }
         });
         if (isUpdate && isUpdate.ok) {
