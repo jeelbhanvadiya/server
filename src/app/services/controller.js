@@ -57,25 +57,25 @@ exports.getServicesStockNo = async (req, res) => {
 
 exports.updateService = async (req, res) => {
     try {
-        const list = await Services.findOne({stockNo: req.body.stockNo});
-        if (list) {
-                list.services.map(item => {
-                if (item.serviceCompleteStatus === false) {
-                    item.serviceCompleteStatus = true
-                }
-            });
-            list.services[list.services.length - 1].signatureImgUrl = req.body.services[0].signatureImgUrl;
-            list.services[list.services.length - 1].serviceRating = req.body.services[0].serviceRating;
-            list.services[list.services.length - 1].serviceBoyRating = req.body.services[0].serviceBoyRating;
-            list.services[list.services.length - 1].completeDate = req.body.services[0].completeDate;
-            await Services.findOneAndUpdate({stockNo: req.body.stockNo}, list).then(data => {
-                res.status(200).send({updateList: data, message: "successfully updated services"});
-            });
-        }else {
-            res.status(200).send({ message: "stock not found services"});
+        const data = req.body;
+        const {services} = data;
+        if (!services || services && !services.length) {
+            return res.status(404).send({success: false, message: "services data is missing"});
         }
+        const isUpdate = await Services.updateOne({stockNo: data.stockNo}, {
+            $set: {
+                "serviceDate": data.serviceDate,
+                'services.0.serviceCompleteStatus': services[0].serviceCompleteStatus,
+                'services.0.serviceManId': services[0].serviceManId,
+                'services.0.address': services[0].address,
+            }
+        });
+        if (isUpdate && isUpdate.ok) {
+            return res.status(200).send({update: true});
+        }
+        res.status(200).send({update: false, message: "Something went wrong"});
     } catch (err) {
-        res.status(404).send({success: false, message: "Please send correct info"});
+        res.status(404).send({success: false, message: err || "Something went wrong"});
     }
 };
 
