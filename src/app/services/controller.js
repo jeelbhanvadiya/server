@@ -13,26 +13,26 @@ exports.createServices = async (req, res) => {
         }
         // const isExist = await Users.findOne({firstName: req.body.name})
         const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
-            if (!isStockNO) {
-                Services.create(req.body)
-                    .then(SellStock => {
-                        res.status(200).send({SellStock, message: "successfully Created services"});
-                    }).catch(err => {
-                    res.status(500).send({
-                        message: err.message || "Some error occurred while creating the company."
-                    });
-                })
+        if (!isStockNO) {
+            Services.create(req.body)
+                .then(SellStock => {
+                    res.status(200).send({SellStock, message: "successfully Created services"});
+                }).catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while creating the company."
+                });
+            })
+        } else {
+            if (isStockNO.services[isStockNO.services.length - 1].serviceCompleteStatus === true) {
+                isStockNO.services.push(req.body.services[0]);
+                await Services.findOneAndUpdate({stockNo: req.body.stockNo}, isStockNO).then(data => {
+                    res.status(200).send({updateList: data, message: "successfully updated services"});
+                });
             } else {
-                    if(isStockNO.services[isStockNO.services.length - 1].serviceCompleteStatus === true){
-                        isStockNO.services.push(req.body.services[0]);
-                        await Services.findOneAndUpdate({stockNo: req.body.stockNo}, isStockNO).then(data => {
-                            res.status(200).send({updateList: data , message: "successfully updated services"});
-                        });
-                    }else {
-                        res.status(200).send({message: "Please Complete first Pending Service"});
-                    }
+                res.status(200).send({message: "Please Complete first Pending Service"});
             }
-        }  catch (err) {
+        }
+    } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while creating services."});
     }
 };
@@ -89,15 +89,15 @@ exports.deleteByServiceId = async (req, res) => {
         }
         const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
         const data = isStockNO;
-        if(isStockNO) {
+        if (isStockNO) {
             const length = data.services.length;
-            await data.services.splice(-1,1);
-            if(length === 1) {
+            await data.services.splice(-1, 1);
+            if (length === 1) {
                 await Services.deleteOne({stockNo: req.body.stockNo});
-                res.status(200).send({ message: "successfully deleted service cluster"});
-            } else{
-                const list = await Services.findOneAndUpdate({stockNo: req.body.stockNo}, data )
-                res.status(200).send({serviceList: list , message: "successfully deleted services"});
+                res.status(200).send({message: "successfully deleted service cluster"});
+            } else {
+                const list = await Services.findOneAndUpdate({stockNo: req.body.stockNo}, data)
+                res.status(200).send({serviceList: list, message: "successfully deleted services"});
             }
         }
     } catch (err) {
@@ -206,9 +206,9 @@ exports.serviceMainIdUpdate = async (req, res) => {
         await Services.updateOne({
             stockNo: req.body.stockNo,
             "services._id": ObjectId(req.body.serviceId)
-        }, {$set: {"services.$.serviceManId": ObjectId(req.body.serviceMainId)}})
-        res.status(200).send({success : true});
-    }catch (e) {
+        }, {$set: {"services.$.serviceManId": ObjectId(req.body.serviceMainId)}});
+        res.status(200).send({success: true});
+    } catch (e) {
         res.status(422).send({error: "Error in Updating ServiceMain Id"});
     }
-}
+};

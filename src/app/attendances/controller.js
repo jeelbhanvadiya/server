@@ -45,7 +45,7 @@ exports.creatAttendance = async (req, res) => {
 
 exports.getAttendance = async (req, res) => {
     try {
-        const {name} = req.query
+        const { name, year, month } = req.query;
         const data = await attendance.aggregate([
             {
                 $project: {
@@ -64,14 +64,23 @@ exports.getAttendance = async (req, res) => {
                             "as": "ar",
                             in: {
                                 "date": "$$ar.k",
-                                "isPresent": `$$ar.v.employeeAttendance.${name}`
+                                "isPresent": `$$ar.v.employeeAttendance.${name}`,
+                                "year": {$split: ["$$ar.k", "-"]}
                             }
                         }
                     }
                 }
             }
         ]);
-        res.status(200).send(data);
+        const record = data && data.length && data[0].dates || [];
+        const updatedData = (record || []).filter((date) => {
+            if (date && date.year.length && date.hasOwnProperty("isPresent")) {
+                const monthNumber = month.toString().padStart(2, '0');
+                return date.year[2] == year && date.year[1] == monthNumber
+            }
+            return false
+        });
+        res.status(200).send(updatedData);
     } catch (err) {
         if (err.message === "$arrayToObject requires an object keys of 'k' and 'v'. Found incorrect number of keys:1") {
             res.status(500).send({message: "employee is not found"});
@@ -91,12 +100,12 @@ exports.getAllAttendance = async (req, res) => {
 };
 
 exports.updateAttendance = async (req, res) => {
-    const {date, empName} = req.query
-    const query = `attendanceList.${date.trim()}.employeeAttendance.${empName}`
-    const data = await attendance.findOne({})
+    const {date, empName} = req.query;
+    const query = `attendanceList.${date.trim()}.employeeAttendance.${empName}`;
+    const data = await attendance.findOne({});
     if (data.attendanceList[date]) {
-        const valueOfEmp = data.attendanceList[date] && data.attendanceList[date].employeeAttendance[empName]
-        const updated = await attendance.updateMany({_id: data._id}, {$set: {[query]: !valueOfEmp}})
+        const valueOfEmp = data.attendanceList[date] && data.attendanceList[date].employeeAttendance[empName];
+        const updated = await attendance.updateMany({_id: data._id}, {$set: {[query]: !valueOfEmp}});
         if (updated && updated.ok) {
             res.status(500).send({updated: true});
         } else {
@@ -113,9 +122,9 @@ exports.updateAttendance = async (req, res) => {
 
 exports.deleteAttendance = async (req, res) => {
     try {
-        await attendance.deleteOne({_id: req.params.id})
+        await attendance.deleteOne({_id: req.params.id});
         res.status(200).send("success");
     } catch (err) {
         res.status(422).send({error: "Error in deleting data"});
     }
-}
+};

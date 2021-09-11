@@ -9,35 +9,8 @@ exports.creatNotifications = async (req, res) => {
                 message: "Data content can not be empty"
             });
         }
-        if(req.body && !req.body.notificationList){
-            return res.status(400).send({
-                message: "Data content can not be empty"
-            });
-        }
-        const isExist = await notificationSchema.find({})
-        if (isExist && isExist.length > 0) {
-            let values = {}
-            Object.keys(req.body.notificationList).forEach((key) => {
-                values[`notificationList.${key}`]= req.body.notificationList[key]
-            })
-            const data = await notificationSchema.updateOne({},{$set: values})
-            if (data && data.ok) {
-                res.status(500).send({updated: true});
-            } else {
-                res.status(500).send({
-                    message: "Some error occurred while updating the Notifications."
-                });
-            }
-        } else {
-            notificationSchema.create(req.body)
-                .then(data => {
-                    res.status(200).send({data, message: "successfully Created Notifications"});
-                }).catch(err => {
-                res.status(500).send({
-                    message: err.message || "Some error occurred while creating the Notifications."
-                });
-            });
-        }
+        const stock = await notificationSchema.create(req.body);
+        res.status(200).send(stock);
     } catch (err) {
         res.status(500).send({message: err.message || "Some error occurred while create notification."});
     }
@@ -59,4 +32,4 @@ exports.deleteNotification = async (req, res) => {
     } catch (err) {
         res.status(422).send({error: "Error in deleting Notification"});
     }
-}
+};

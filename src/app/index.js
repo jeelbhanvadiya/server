@@ -16,17 +16,17 @@ const validateToken = require("../middlewares/validateToken");
 
 module.exports = (app) => {
     app.use("/users", usersRouter);
-    app.use("/stock",validateToken, stockRouter);
-    app.use("/sell-stock",validateToken, sellStockRouter);
-    app.use("/company",validateToken, companyRouter);
+    app.use("/stock", validateToken, stockRouter);
+    app.use("/sell-stock", validateToken, sellStockRouter);
+    app.use("/company", validateToken, companyRouter);
     app.use("/validatetoken", validateToken);
-    app.use("/service",validateToken, servicesRouter);
-    app.use("/rawmatirial",validateToken, rawMaterialRouter);
-    app.use("/remainingRawMaterial",validateToken, remainingRawMaterialRouter);
-    app.use("/ac_data",validateToken, acData)
-    app.use("/sellrawmatirial",validateToken, sellRawMatirialRouter)
-    app.use("/attendance",validateToken, attendance)
-    app.use("/rawmatiriallist",validateToken, rawMaterialTypesRouter)
-    app.use("/notifications",validateToken,NotificationRouter)
-    app.use("/extraServices",validateToken,extraServicesRouter)
+    app.use("/service", validateToken, servicesRouter);
+    app.use("/rawmatirial", validateToken, rawMaterialRouter);
+    app.use("/remainingRawMaterial", validateToken, remainingRawMaterialRouter);
+    app.use("/ac_data", validateToken, acData);
+    app.use("/sellrawmatirial", validateToken, sellRawMatirialRouter);
+    app.use("/attendance", validateToken, attendance);
+    app.use("/rawmatiriallist", validateToken, rawMaterialTypesRouter);
+    app.use("/notifications", validateToken, NotificationRouter);
+    app.use("/extraServices", validateToken, extraServicesRouter)
 };

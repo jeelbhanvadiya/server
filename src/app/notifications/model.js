@@ -4,10 +4,13 @@ const Schema = mongoose.Schema;
 
 const notificationSchema = new Schema(
     {
-        notificationList: { type: Object }
+        title: {type: String},
+        content: {type: String},
+        isRead: {type: Boolean},
+        date: {type: Date}
     },
     {
-            timestamps: true,
+        timestamps: true,
     }
 );
 
