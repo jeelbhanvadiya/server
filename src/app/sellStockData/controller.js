@@ -184,7 +184,7 @@ exports.updateSellData = async (req, res) => {
             }
         } else {
             res.status(404).send({success: false, message: "Please send correct data"});
-        }
+        }   
     } catch (err) {
         res.send(err);
     }
@@ -192,7 +192,11 @@ exports.updateSellData = async (req, res) => {
 
 exports.deleteSellStock = async (req, res) => {
     try {
-        await sellStock.deleteOne({_id: req.params.id})
+        const updated = await sellStock.findOneAndUpdate({}, { $pull: { "stock": { stockNo: req.params.id } } }, { upsert: false });
+        const update = await stockModal.updateOne({stockNo: req.params.id}, {
+            sell: false,
+        });
+        // await sellStock.deleteOne({_id: req.params.id})
         res.status(200).send("success");
     } catch (err) {
         res.status(422).send({error: "Error in getting course details"});
