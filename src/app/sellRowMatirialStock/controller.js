@@ -32,6 +32,7 @@ exports.getSellRawMatirialStock = async (req, res) => {
 
 exports.updateData = async (req, res) => {
     try {
+        console.log('dfsfksd',req.body)
         const update = await sellRawMatirialStock.findByIdAndUpdate(req.params.id, req.body);
         res.status(200).send({success: true, update});
     } catch (err) {

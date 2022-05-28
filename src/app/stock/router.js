@@ -8,6 +8,8 @@ const router = express.Router( );
 
 router.post( "/create", controller.createStock );
 
+router.post( "/migration", controller.migrationStock );
+
 router.get("/get", controller.getStock);
 
 router.get("/getstockno/:stockno", controller.getStockNoWise);

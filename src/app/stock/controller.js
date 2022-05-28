@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const commanFun = require('../../commanFun/index')
 const Stock = mongoose.model("stock");
 const acData = mongoose.model("acData");
+const ObjectId = mongoose.Types.ObjectId
 
 function getNumber(num, targetLength) {
     return num.toString().padStart(targetLength, 0);
@@ -219,3 +220,25 @@ exports.filterStockData = async (req, res) => {
         res.status(422).send({error: "Error in getting course details"});
     }
 }
+
+exports.migrationStock = async (req, res) => {
+    try {
+        /**
+         * @param {
+         * stockIds : Array<string>
+         * stockYear : String 
+         * }
+         */
+        let {stockIds, stockYear}= req.body, requestArray = []
+        const oldStockCount = await Stock.aggregate([
+            {$match: {yearSubstring: accData[0].stockNo.toString()}},
+        ]);
+          await stockIds.forEach((data,index) => {
+            requestArray.push(Stock.updateOne({_id:ObjectId(data),isDeleted:false},{stockNo: `${stockYear}${getNumber(oldStockCount + index+1, 5)}`}))
+        })
+        await Promise.all(requestArray)
+        res.status(200).send({success:true, message: "You've requested year stock migrate successful!"});
+    } catch (err) {
+        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+    }
+};
