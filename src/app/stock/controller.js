@@ -230,11 +230,13 @@ exports.migrationStock = async (req, res) => {
          * }
          */
         let {stockIds, stockYear}= req.body, requestArray = []
+        const accData = await acData.find({})
         const oldStockCount = await Stock.aggregate([
+            {$project: {yearSubstring: {$substr: ["$stockNo", 0, 4]}},},
             {$match: {yearSubstring: accData[0].stockNo.toString()}},
         ]);
           await stockIds.forEach((data,index) => {
-            requestArray.push(Stock.updateOne({_id:ObjectId(data),isDeleted:false},{stockNo: `${stockYear}${getNumber(oldStockCount + index+1, 5)}`}))
+            requestArray.push(Stock.updateOne({_id:ObjectId(data),isDeleted:false},{stockNo: `${stockYear}${getNumber(oldStockCount?.length + index+1, 5)}`}))
         })
         await Promise.all(requestArray)
         res.status(200).send({success:true, message: "You've requested year stock migrate successful!"});

@@ -16,7 +16,7 @@ const validateToken = require("../middlewares/validateToken");
 
 module.exports = (app) => {
     app.use("/users", usersRouter);
-    app.use("/stock", validateToken, stockRouter);
+    app.use("/stock",  stockRouter);
     app.use("/sell-stock", validateToken, sellStockRouter);
     app.use("/company", validateToken, companyRouter);
     app.use("/validatetoken", validateToken);
