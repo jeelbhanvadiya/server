@@ -55,20 +55,20 @@ jobs:
       - checkout
 
 workflows:
-  build_all:    
+  build:    
     jobs:
       - build_all
-  build_stage:    
+  stage:
     jobs:
       - build_stage:
           filters:
             branches:
               only:
                 - stage
-   build_prod:    
+  prod:
     jobs:
       - build_prod:
           filters:
             branches:
               only:
-                - main
+                - main                
