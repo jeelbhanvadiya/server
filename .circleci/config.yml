@@ -6,8 +6,7 @@ orbs:
 jobs:
   build_all: 
     docker: 
-    docker:
-      - image: cimg/node:16.17
+      - image: cimg/node:14.18.0
     environment:
       BUCKET_NAME: elasticbeanstalk-me-south-1-597733179072
       APP_NAME: jkr
@@ -29,6 +28,8 @@ jobs:
           command: npm run dist
 
   build_stage: 
+    docker: 
+      - image: cimg/node:14.18.0  
     environment:
       ENV: Jkr-stage
     steps:
@@ -40,6 +41,8 @@ jobs:
       - run: echo "Health is Grey, please check the AWS console"       
 
   build_prod: 
+    docker: 
+      - image: cimg/node:14.18.0    
     environment:
       ENV: Jkr-production
     steps:
@@ -52,11 +55,9 @@ jobs:
       - checkout
 
 workflows:
-  version: 2
   build_all:    
     jobs:
       - build_all
-
   build_stage:    
     jobs:
       - build_stage:
@@ -64,7 +65,6 @@ workflows:
             branches:
               only:
                 - stage
-
    build_prod:    
     jobs:
       - build_prod:
