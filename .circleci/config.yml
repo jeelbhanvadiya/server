@@ -4,13 +4,14 @@ orbs:
   node: circleci/node@4.7
   aws-cli: circleci/aws-cli@2.0.6
 jobs:
-  build_all: 
+  build_stage: 
     docker: 
-      - image: cimg/node:14.18.0
+      - image: cimg/node:14.18.0  
     environment:
       BUCKET_NAME: elasticbeanstalk-me-south-1-597733179072
       APP_NAME: jkr
       DEFAULT_REGION: me-south-1
+      ENV: Jkr-stage
     steps:
       - checkout
       - node/install-packages:
@@ -21,18 +22,8 @@ jobs:
           aws-secret-access-key: AWS_ACCESS_SECRET
           aws-region: AWS_REGION_NAME
       - run:
-          name: Make build
-          command: npm run build
-      - run:
           name: Build zip
-          command: npm run dist
-
-  build_stage: 
-    docker: 
-      - image: cimg/node:14.18.0  
-    environment:
-      ENV: Jkr-stage
-    steps:
+          command: npm run dist    
       - run:
           name: Elastic beanstalk configuration
           command: aws s3 cp build/$APP_NAME.zip s3://$BUCKET_NAME/$APP_NAME-<< pipeline.id >>.zip
@@ -44,8 +35,22 @@ jobs:
     docker: 
       - image: cimg/node:14.18.0    
     environment:
+      BUCKET_NAME: elasticbeanstalk-me-south-1-597733179072
+      APP_NAME: jkr
+      DEFAULT_REGION: me-south-1    
       ENV: Jkr-production
     steps:
+      - checkout
+      - node/install-packages:
+          # If you are using yarn, change the line below from "npm" to "yarn"
+          pkg-manager: npm
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY
+          aws-secret-access-key: AWS_ACCESS_SECRET
+          aws-region: AWS_REGION_NAME
+      - run:
+          name: Build zip
+          command: npm run dist    
       - run:
           name: Elastic beanstalk configuration
           command: aws s3 cp build/$APP_NAME.zip s3://$BUCKET_NAME/$APP_NAME-<< pipeline.id >>.zip
@@ -55,9 +60,6 @@ jobs:
       - checkout
 
 workflows:
-  build_all:    
-    jobs:
-      - build_all
   build_stage:    
     jobs:
       - build_stage:
