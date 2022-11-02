@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId
-const Services = require('../extraServices/model');
+const Services = require('../services/model');
 const Stock = require('../stock/model');
 const rawMaterial = require('../rawMaterialStockData/model');
 const attendance = require('../attendances/model')
