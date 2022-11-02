@@ -10,7 +10,7 @@ jobs:
     environment:
       BUCKET_NAME: elasticbeanstalk-ap-south-1-465768924215
       APP_NAME: jkr
-      DEFAULT_REGION: me-south-1
+      DEFAULT_REGION: ap-south-1
       ENV: Jkr-stage
     steps:
       - checkout
@@ -37,7 +37,7 @@ jobs:
     environment:
       BUCKET_NAME: elasticbeanstalk-ap-south-1-465768924215
       APP_NAME: jkr
-      DEFAULT_REGION: me-south-1    
+      DEFAULT_REGION: ap-south-1    
       ENV: Jkr-production
     steps:
       - checkout
