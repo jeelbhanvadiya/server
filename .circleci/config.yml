@@ -67,10 +67,10 @@ workflows:
             branches:
               only:
                 - stage
-   build_prod:    
+  prod:
     jobs:
       - build_prod:
           filters:
             branches:
               only:
-                - main
+                - main                
