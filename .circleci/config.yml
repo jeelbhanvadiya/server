@@ -8,7 +8,7 @@ jobs:
     docker: 
       - image: cimg/node:14.18.0  
     environment:
-      BUCKET_NAME: elasticbeanstalk-me-south-1-597733179072
+      BUCKET_NAME: elasticbeanstalk-ap-south-1-465768924215
       APP_NAME: jkr
       DEFAULT_REGION: me-south-1
       ENV: Jkr-stage
@@ -35,7 +35,7 @@ jobs:
     docker: 
       - image: cimg/node:14.18.0    
     environment:
-      BUCKET_NAME: elasticbeanstalk-me-south-1-597733179072
+      BUCKET_NAME: elasticbeanstalk-ap-south-1-465768924215
       APP_NAME: jkr
       DEFAULT_REGION: me-south-1    
       ENV: Jkr-production
