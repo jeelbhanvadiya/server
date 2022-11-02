@@ -8,6 +8,7 @@
     "start": "nodemon startindex.js",
     "doc": "apidoc -i src/ -o doc",
     "lint": "eslint src",
+    "dist": "sh ./scripts/build.sh",
     "ci": "npm run lint"
   },
   "author": "",

@@ -1,0 +1,73 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@4.7
+  aws-cli: circleci/aws-cli@2.0.6
+jobs:
+  build_all: 
+    docker: 
+    docker:
+      - image: cimg/node:16.17
+    environment:
+      BUCKET_NAME: elasticbeanstalk-me-south-1-597733179072
+      APP_NAME: jkr
+      DEFAULT_REGION: me-south-1
+    steps:
+      - checkout
+      - node/install-packages:
+          # If you are using yarn, change the line below from "npm" to "yarn"
+          pkg-manager: npm
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY
+          aws-secret-access-key: AWS_ACCESS_SECRET
+          aws-region: AWS_REGION_NAME
+      - run:
+          name: Make build
+          command: npm run build
+      - run:
+          name: Build zip
+          command: npm run dist
+
+  build_stage: 
+    environment:
+      ENV: Jkr-stage
+    steps:
+      - run:
+          name: Elastic beanstalk configuration
+          command: aws s3 cp build/$APP_NAME.zip s3://$BUCKET_NAME/$APP_NAME-<< pipeline.id >>.zip
+      - run: aws elasticbeanstalk create-application-version --application-name $APP_NAME --version-label $APP_NAME-<< pipeline.id >> --source-bundle S3Bucket=$BUCKET_NAME,S3Key=$APP_NAME-<< pipeline.id >>.zip --region $DEFAULT_REGION
+      - run: aws elasticbeanstalk update-environment --application-name $APP_NAME --environment-name $ENV --version-label $APP_NAME-<< pipeline.id >> --region $DEFAULT_REGION
+      - run: echo "Health is Grey, please check the AWS console"       
+
+  build_prod: 
+    environment:
+      ENV: Jkr-production
+    steps:
+      - run:
+          name: Elastic beanstalk configuration
+          command: aws s3 cp build/$APP_NAME.zip s3://$BUCKET_NAME/$APP_NAME-<< pipeline.id >>.zip
+      - run: aws elasticbeanstalk create-application-version --application-name $APP_NAME --version-label $APP_NAME-<< pipeline.id >> --source-bundle S3Bucket=$BUCKET_NAME,S3Key=$APP_NAME-<< pipeline.id >>.zip --region $DEFAULT_REGION
+      - run: aws elasticbeanstalk update-environment --application-name $APP_NAME --environment-name $ENV --version-label $APP_NAME-<< pipeline.id >> --region $DEFAULT_REGION
+      - run: echo "Health is Grey, please check the AWS console"       
+      - checkout
+
+workflows:
+  build_all:    
+    jobs:
+      - build_all
+
+  build_stage:    
+    jobs:
+      - build_stage:
+          filters:
+            branches:
+              only:
+                - stage
+
+   build_prod:    
+    jobs:
+      - build_prod:
+          filters:
+            branches:
+              only:
+                - main

@@ -7,7 +7,7 @@ const customResponses = require("./src/middlewares/customResponses");
 const logger = require("./src/utilities/logger");
 
 const app = express();
-const port = process.env.PORT || config.port;
+const port = process.env.PORT || 9999;
 const ENV = process.env.NODE_ENV || config.env;
 
 app.set('view engine', 'ejs');
@@ -47,13 +47,13 @@ app.use((err, req, res, next) => {
 
 app.use(function (req, res, next) {
 
-//to allow cross domain requests to send cookie information.
+    //to allow cross domain requests to send cookie information.
     res.header('Access-Control-Allow-Credentials', true);
 
-// origin can not be '*' when crendentials are enabled. so need to set it to the request origin
+    // origin can not be '*' when crendentials are enabled. so need to set it to the request origin
     res.header('Access-Control-Allow-Origin', req.headers.origin);
 
-// list of methods that are supported by the server
+    // list of methods that are supported by the server
     res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, X-XSRF-TOKEN');
 
