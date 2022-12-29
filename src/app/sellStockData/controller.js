@@ -62,6 +62,15 @@ exports.createSellStock = async (req, res) => {
 
 exports.getSellStock = async (req, res) => {
     try {
+        const SellStock = await sellStock.find(query);
+        res.status(200).send(SellStock);
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
+    }
+};
+
+exports.getSellStockListName = async (req, res) => {
+    try {
         let query = {}
         if (req.body.query) {
             query = req.body.query
@@ -70,8 +79,9 @@ exports.getSellStock = async (req, res) => {
             // query = {clientPhoneNo: 73895466234}
             // query = { 'stock.GSTNo': "222"}
         }
-        const SellStock = await sellStock.find(query);
-        res.status(200).send(SellStock);
+        const clientNames = await sellStock.distinct("clientName");
+        const clientCompanyNames = await sellStock.distinct("clientCompanyName");
+        res.status(200).send({ clientNames, clientCompanyNames });
     } catch (err) {
         res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
     }

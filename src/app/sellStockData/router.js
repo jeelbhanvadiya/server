@@ -11,6 +11,8 @@ router.post("/create", controller.createSellStock);
 
 router.post("/get", controller.getSellStock);
 
+router.get("/get/unique_fields", controller.getSellStock);
+
 router.post("/update-stock-data", controller.updateSellStock);
 
 router.delete("/delete/:id", controller.deleteSellStock);
