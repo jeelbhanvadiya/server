@@ -62,6 +62,10 @@ exports.createSellStock = async (req, res) => {
 
 exports.getSellStock = async (req, res) => {
     try {
+        let query = {}
+        if (req.body.query) {
+            query = req.body.query
+        }
         const SellStock = await sellStock.find(query);
         res.status(200).send(SellStock);
     } catch (err) {
