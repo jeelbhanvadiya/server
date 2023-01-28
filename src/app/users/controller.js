@@ -129,10 +129,12 @@ exports.forgetPassword = async (req, res) => {
                     });
                 }
             });
+        } else {
+            res.status(500).send({
+                message: "Email address not found!"
+            });
         }
-        res.status(500).send({
-            message: "Email address not found!"
-        });
+
     } catch (error) {
         console.log(error)
         res.status(200).send({
@@ -142,11 +144,9 @@ exports.forgetPassword = async (req, res) => {
 };
 
 exports.otp_verification = async (req, res) => {
-    reqInfo(req)
     let { otp, email } = req.body
     try {
         let data = await Users.findOneAndUpdate({ email, otp }, { otp: 0, otpExpireTime: null })
-
         if (!data) return res.status(400).json({ message: "Invalid OTP!" });
         if (new Date(data.otpExpireTime).getTime() < new Date().getTime()) return res.status(410).json({ message: "OTP has been expired!" });
         return res.status(200).json({ success: true, data: { _id: data?._id }, message: "OTP verified!" });
@@ -157,7 +157,6 @@ exports.otp_verification = async (req, res) => {
 }
 
 exports.set_password = async (req, res) => {
-    reqInfo(req)
     let { userId, password } = req.body
     try {
         let data = await Users.findOneAndUpdate({ _id: ObjectId(userId) }, { password: bcrypt.hashSync(password, 8) })
