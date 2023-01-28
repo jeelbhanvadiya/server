@@ -96,8 +96,8 @@ exports.forgetPassword = async (req, res) => {
         let mailTransporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD
+                user: serverConfig.mail.EMAIL,
+                pass: serverConfig.mail.PASSWORD
             }
         });
         while (otpFlag == 1) {
@@ -113,7 +113,7 @@ exports.forgetPassword = async (req, res) => {
         const userDetails = await Users.findOneAndUpdate({ email: req.body.email.trim().toString() }, { otp, otpExpireTime: new Date(new Date().setMinutes(new Date().getMinutes() + 10)) })
         if (userDetails && userDetails._id) {
             let mailDetails = {
-                from: process.env.EMAIL,
+                from: serverConfig.mail.EMAIL,
                 to: userDetails.email,
                 subject: "Your Forgotton Password", // Subject line
                 text: "Your Forgotton Password", // plain text body

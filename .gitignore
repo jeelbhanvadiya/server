@@ -15,7 +15,7 @@ ebs.bat
 # dotenv environment variables file
 .env
 .env.test
-
+*.zip
 signImages
 .vercel
 
