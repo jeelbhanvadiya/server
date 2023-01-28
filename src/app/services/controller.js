@@ -12,28 +12,28 @@ exports.createServices = async (req, res) => {
             });
         }
         // const isExist = await Users.findOne({firstName: req.body.name})
-        const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
+        const isStockNO = await Services.findOne({ stockNo: req.body.stockNo });
         if (!isStockNO) {
             Services.create(req.body)
                 .then(SellStock => {
-                    res.status(200).send({SellStock, message: "successfully Created services"});
+                    res.status(200).send({ SellStock, message: "successfully Created services" });
                 }).catch(err => {
-                res.status(500).send({
-                    message: err.message || "Some error occurred while creating the company."
-                });
-            })
+                    res.status(500).send({
+                        message: err.message || "Some error occurred while creating the company."
+                    });
+                })
         } else {
             if (isStockNO.services[isStockNO.services.length - 1].serviceCompleteStatus === true) {
                 isStockNO.services.push(req.body.services[0]);
-                await Services.findOneAndUpdate({stockNo: req.body.stockNo}, isStockNO).then(data => {
-                    res.status(200).send({updateList: data, message: "successfully updated services"});
+                await Services.findOneAndUpdate({ stockNo: req.body.stockNo }, isStockNO).then(data => {
+                    res.status(200).send({ updateList: data, message: "successfully updated services" });
                 });
             } else {
-                res.status(200).send({message: "Please Complete first Pending Service"});
+                res.status(200).send({ message: "Please Complete first Pending Service" });
             }
         }
     } catch (err) {
-        res.status(500).send({message: err.message || "Some error occurred while creating services."});
+        res.status(500).send({ message: err.message || "Some error occurred while creating services." });
     }
 };
 
@@ -42,41 +42,43 @@ exports.getServiceData = async (req, res) => {
         const SellStock = await Services.find({});
         res.status(200).send(SellStock);
     } catch (err) {
-        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+        res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
     }
 };
 
 exports.getServicesStockNo = async (req, res) => {
     try {
-        const SellStock = await Services.findOne({stockNo: req.params.id});
+        const SellStock = await Services.findOne({ stockNo: req.params.id });
         res.status(200).send(SellStock.services);
     } catch (err) {
-        res.status(500).send({message: err.message || "Some error occurred while retrieving login."});
+        res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
     }
 };
 
 exports.updateService = async (req, res) => {
     try {
         const data = req.body;
-        const {services} = data;
+        const { services } = data;
         if (!services || services && !services.length) {
-            return res.status(404).send({success: false, message: "services data is missing"});
+            return res.status(404).send({ success: false, message: "services data is missing" });
         }
-        const isUpdate = await Services.updateOne({stockNo: data.stockNo}, {
+        const isUpdate = await Services.updateOne({ stockNo: data.stockNo }, {
             $set: {
                 "serviceDate": data.serviceDate,
                 'services.0.serviceCompleteStatus': services[0].serviceCompleteStatus,
-                'services.0.serviceManId': services[0].serviceManId,
-                'services.0.address': services[0].address,
-                'services.0.remarks': services[0].remarks,
+                'services.0.completeDate': services[0].completeDate,
+                'services.0.serviceBoyRating': services[0].serviceBoyRating,
+                'services.0.Feedback': services[0].Feedback,
+                'services.0.signatureImgUrl': services[0].signatureImgUrl,
+                'services.0.serviceRating': services[0].serviceRating,
             }
         });
         if (isUpdate && isUpdate.ok) {
-            return res.status(200).send({update: true});
+            return res.status(200).send({ update: true });
         }
-        res.status(200).send({update: false, message: "Something went wrong"});
+        res.status(200).send({ update: false, message: "Something went wrong" });
     } catch (err) {
-        res.status(404).send({success: false, message: err || "Something went wrong"});
+        res.status(404).send({ success: false, message: err || "Something went wrong" });
     }
 };
 
@@ -87,30 +89,30 @@ exports.deleteByServiceId = async (req, res) => {
                 message: "please pass stockno and service id, it can not be empty"
             });
         }
-        const isStockNO = await Services.findOne({stockNo: req.body.stockNo});
+        const isStockNO = await Services.findOne({ stockNo: req.body.stockNo });
         const data = isStockNO;
         if (isStockNO) {
             const length = data.services.length;
             await data.services.splice(-1, 1);
             if (length === 1) {
-                await Services.deleteOne({stockNo: req.body.stockNo});
-                res.status(200).send({message: "successfully deleted service cluster"});
+                await Services.deleteOne({ stockNo: req.body.stockNo });
+                res.status(200).send({ message: "successfully deleted service cluster" });
             } else {
-                const list = await Services.findOneAndUpdate({stockNo: req.body.stockNo}, data)
-                res.status(200).send({serviceList: list, message: "successfully deleted services"});
+                const list = await Services.findOneAndUpdate({ stockNo: req.body.stockNo }, data)
+                res.status(200).send({ serviceList: list, message: "successfully deleted services" });
             }
         }
     } catch (err) {
-        res.status(422).send({error: "Error in getting deleting service details"});
+        res.status(422).send({ error: "Error in getting deleting service details" });
     }
 }
 
 exports.deleteService = async (req, res) => {
     try {
-        await Services.deleteOne({_id: req.params.id});
+        await Services.deleteOne({ _id: req.params.id });
         res.status(200).send("success");
     } catch (err) {
-        res.status(422).send({error: "Error in getting course details"});
+        res.status(422).send({ error: "Error in getting course details" });
     }
 }
 
@@ -121,10 +123,10 @@ exports.uploadSignImage = async (req, res) => {
             await Services.updateOne({
                 stockNo: req.body.stockNo,
                 "services.serviceCompleteStatus": true
-            }, {$set: {"services.$.signatureImgUrl": pathName}})
+            }, { $set: { "services.$.signatureImgUrl": pathName } })
             res.success(pathName);
         } else {
-            res.success({success: "failed", message: "something went wrong"});
+            res.success({ success: "failed", message: "something went wrong" });
         }
     } catch (err) {
         res.send(err);
@@ -133,27 +135,27 @@ exports.uploadSignImage = async (req, res) => {
 
 exports.filterData = async (req, res) => {
     try {
-        const {value, type} = req.body;
+        const { value, type } = req.body;
         let data = [];
         if (type === "DAY") {
-            data = await Services.find({serviceDate: commanFun.getFormatDate(value), serviceCompleteStatus: false})
+            data = await Services.find({ serviceDate: commanFun.getFormatDate(value), serviceCompleteStatus: false })
         } else if (type === "MONTH") {
             data = await Services.aggregate(
                 [
                     {
                         $project:
-                            {
-                                month: {$month: '$serviceDate'},
-                                stockNo: 1,
-                                serviceDate: 1,
-                                serviceManId: 1,
-                                serviceCompleteStatus: 1,
-                                Feedback: 1,
-                                signatureImgUrl: 1
-                            }
+                        {
+                            month: { $month: '$serviceDate' },
+                            stockNo: 1,
+                            serviceDate: 1,
+                            serviceManId: 1,
+                            serviceCompleteStatus: 1,
+                            Feedback: 1,
+                            signatureImgUrl: 1
+                        }
                     },
                     {
-                        $match: {month: parseInt(value), serviceCompleteStatus: false}
+                        $match: { month: parseInt(value), serviceCompleteStatus: false }
                     }
                 ])
         } else if (type === "YEAR") {
@@ -161,18 +163,18 @@ exports.filterData = async (req, res) => {
                 [
                     {
                         $project:
-                            {
-                                year: {$year: '$serviceDate'},
-                                stockNo: 1,
-                                serviceDate: 1,
-                                serviceManId: 1,
-                                serviceCompleteStatus: 1,
-                                Feedback: 1,
-                                signatureImgUrl: 1
-                            }
+                        {
+                            year: { $year: '$serviceDate' },
+                            stockNo: 1,
+                            serviceDate: 1,
+                            serviceManId: 1,
+                            serviceCompleteStatus: 1,
+                            Feedback: 1,
+                            signatureImgUrl: 1
+                        }
                     },
                     {
-                        $match: {year: parseInt(value), serviceCompleteStatus: false}
+                        $match: { year: parseInt(value), serviceCompleteStatus: false }
                     }
                 ])
         } else if (type === "WEEK") {
@@ -180,24 +182,24 @@ exports.filterData = async (req, res) => {
                 [
                     {
                         $project:
-                            {
-                                week: {$week: '$serviceDate'},
-                                stockNo: 1,
-                                serviceDate: 1,
-                                serviceManId: 1,
-                                serviceCompleteStatus: 1,
-                                Feedback: 1,
-                                signatureImgUrl: 1
-                            }
+                        {
+                            week: { $week: '$serviceDate' },
+                            stockNo: 1,
+                            serviceDate: 1,
+                            serviceManId: 1,
+                            serviceCompleteStatus: 1,
+                            Feedback: 1,
+                            signatureImgUrl: 1
+                        }
                     },
                     {
-                        $match: {serviceCompleteStatus: false}
+                        $match: { serviceCompleteStatus: false }
                     }
                 ])
         }
-        res.status(200).send({success: true, data});
+        res.status(200).send({ success: true, data });
     } catch (err) {
-        res.status(422).send({error: "Error in getting course details"});
+        res.status(422).send({ error: "Error in getting course details" });
     }
 }
 
@@ -206,9 +208,9 @@ exports.serviceMainIdUpdate = async (req, res) => {
         await Services.updateOne({
             stockNo: req.body.stockNo,
             "services._id": ObjectId(req.body.serviceId)
-        }, {$set: {"services.$.serviceManId": ObjectId(req.body.serviceMainId)}});
-        res.status(200).send({success: true});
+        }, { $set: { "services.$.serviceManId": ObjectId(req.body.serviceMainId) } });
+        res.status(200).send({ success: true });
     } catch (e) {
-        res.status(422).send({error: "Error in Updating ServiceMain Id"});
+        res.status(422).send({ error: "Error in Updating ServiceMain Id" });
     }
 };

@@ -5,9 +5,12 @@
   "main": "startindex.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon startindex.js",
+    "start": "node startindex.js",
+    "development": "start development.bat",
+    "dev": "set NODE_ENV=development&&nodemon startindex.js",
     "doc": "apidoc -i src/ -o doc",
     "lint": "eslint src",
+    "dist": "sh ./scripts/build.sh",
     "ci": "npm run lint"
   },
   "author": "",
@@ -31,6 +34,9 @@
     "pug": "^3.0.2",
     "save": "^2.3.0",
     "winston": "^2.3.1"
+  },
+  "engines": {
+    "node": "14.18.0"
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
