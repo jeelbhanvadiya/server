@@ -130,6 +130,9 @@ exports.forgetPassword = async (req, res) => {
                 }
             });
         }
+        res.status(500).send({
+            message: "Email address not found!"
+        });
     } catch (error) {
         console.log(error)
         res.status(200).send({
