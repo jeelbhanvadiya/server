@@ -6,7 +6,7 @@ module.exports = function (app) {
     // mongoose.connection.on('error', err=>{
     //     console.log('connection failed...');
     // });
-    mongoose.connect(serverConfig.mongoUrl, { useUnifiedTopology: true, useNewUrlParser: true });
+    mongoose.connect(serverConfig.mongoUrl, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
     mongoose.Promise = global.Promise;
 
     process.on("SIGINT", cleanup);
