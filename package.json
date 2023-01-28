@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node startindex.js",
+    "development": "start development.bat",
     "dev": "set NODE_ENV=development&&nodemon startindex.js",
     "doc": "apidoc -i src/ -o doc",
     "lint": "eslint src",
