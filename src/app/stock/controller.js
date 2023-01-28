@@ -52,14 +52,20 @@ exports.migration = async (req, res) => {
     try {
         let { stockIds, stockYear } = req.body
         let stockNo = new RegExp(`^${stockYear}`, "ig")
-        let isAlreadyAssign = await Stock.findOne({ _id: ObjectId(stockIds), stockNo: { $regex: stockNo } })
-        if (isAlreadyAssign)
-            return res.status(200).send({ stockData: {}, message: "You've request stock already exist same year." });
-        let count = await Stock.countDocuments({ stockNo: { $regex: stockNo } });
-        let stockData = await Stock.findOneAndUpdate({ _id: ObjectId(stockIds) }, { stockNo: `${stockYear}${getNumber(count + 1, 5)}` }, { new: true })
-        if (!stockData)
-            return res.status(200).send({ stockData, message: "You've request stock id not found." });
-        return res.status(200).send(stockData);
+        for (let i = 0; i < stockIds?.length; i++) {
+            let isAlreadyAssign = await Stock.findOne({ _id: ObjectId(stockIds[i]), stockNo: { $regex: stockNo } })
+            if (isAlreadyAssign)
+                return res.status(200).send({ stockData: {}, message: "You've request stock already exist same year." });
+        }
+        for (let i = 0; i < stockIds?.length; i++) {
+            let count = await Stock.countDocuments({ stockNo: { $regex: stockNo } });
+            let stockData = await Stock.findOneAndUpdate({ _id: ObjectId(stockIds[i]) }, { stockNo: `${stockYear}${getNumber(count + 1, 5)}` }, { new: true })
+            if (!stockData)
+                return res.status(200).send({ stockData, message: "You've request stock id not found." });
+        }
+        return res.status(200).send({
+            message: "Stock has been successfully migrated"
+        })
     } catch (err) {
         res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
     }
