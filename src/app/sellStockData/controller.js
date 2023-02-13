@@ -187,6 +187,21 @@ exports.updateSellData = async (req, res) => {
     }
 };
 
+exports.update_sell_stock_data = async (req, res) => {
+    try {
+        let { sellStockId } = req.body, body = req.body
+        delete body?.sellStockId
+        const response = await sellStock.findOneAndUpdate({ _id: ObjectId(sellStockId) }, body);
+        if (response) {
+            res.status(200).send({ updated: true });
+        } else {
+            res.status(200).send({ updated: false, message: "sell stock id not found!" });
+        }
+    } catch (err) {
+        res.send(err);
+    }
+};
+
 exports.deleteSellStock = async (req, res) => {
     try {
         await sellStock.deleteOne({ _id: req.params.id })
