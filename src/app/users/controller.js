@@ -96,8 +96,8 @@ exports.forgetPassword = async (req, res) => {
         let mailTransporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD
+                user: serverConfig.mail.EMAIL,
+                pass: serverConfig.mail.PASSWORD
             }
         });
         while (otpFlag == 1) {
@@ -113,7 +113,7 @@ exports.forgetPassword = async (req, res) => {
         const userDetails = await Users.findOneAndUpdate({ email: req.body.email.trim().toString() }, { otp, otpExpireTime: new Date(new Date().setMinutes(new Date().getMinutes() + 10)) })
         if (userDetails && userDetails._id) {
             let mailDetails = {
-                from: process.env.EMAIL,
+                from: serverConfig.mail.EMAIL,
                 to: userDetails.email,
                 subject: "Your Forgotton Password", // Subject line
                 text: "Your Forgotton Password", // plain text body
@@ -129,7 +129,12 @@ exports.forgetPassword = async (req, res) => {
                     });
                 }
             });
+        } else {
+            res.status(500).send({
+                message: "Email address not found!"
+            });
         }
+
     } catch (error) {
         console.log(error)
         res.status(200).send({
@@ -139,11 +144,9 @@ exports.forgetPassword = async (req, res) => {
 };
 
 exports.otp_verification = async (req, res) => {
-    reqInfo(req)
     let { otp, email } = req.body
     try {
         let data = await Users.findOneAndUpdate({ email, otp }, { otp: 0, otpExpireTime: null })
-
         if (!data) return res.status(400).json({ message: "Invalid OTP!" });
         if (new Date(data.otpExpireTime).getTime() < new Date().getTime()) return res.status(410).json({ message: "OTP has been expired!" });
         return res.status(200).json({ success: true, data: { _id: data?._id }, message: "OTP verified!" });
@@ -154,7 +157,6 @@ exports.otp_verification = async (req, res) => {
 }
 
 exports.set_password = async (req, res) => {
-    reqInfo(req)
     let { userId, password } = req.body
     try {
         let data = await Users.findOneAndUpdate({ _id: ObjectId(userId) }, { password: bcrypt.hashSync(password, 8) })

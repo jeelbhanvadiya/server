@@ -82,6 +82,20 @@ exports.updateService = async (req, res) => {
     }
 };
 
+exports.updateServiceFullDetails = async (req, res) => {
+    try {
+        const body = req.body;
+        const { serviceId } = body;
+        const isUpdate = await Services.updateOne({ _id: ObjectId(serviceId) }, body);
+        if (isUpdate && isUpdate.ok) {
+            return res.status(200).send({ update: true });
+        }
+        res.status(200).send({ update: false, message: "Something went wrong" });
+    } catch (err) {
+        res.status(404).send({ success: false, message: err || "Something went wrong" });
+    }
+};
+
 exports.deleteByServiceId = async (req, res) => {
     try {
         if (!req.body) {

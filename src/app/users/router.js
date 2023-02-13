@@ -12,13 +12,13 @@ router.post("/signup", controller.create);
 
 router.post("/login", controller.login);
 
+router.post("/forgot-password", controller.forgetPassword);
+
 router.post("/otp_verification", controller.otp_verification);
 
 router.post("/set_password", controller.set_password);
 
 router.put("/edit-profile/:email", controller.edit);
-
-router.post("/forgot-password", controller.forgetPassword);
 
 router.get("/getservicemanlist", controller.findAllServiceManList);
 
