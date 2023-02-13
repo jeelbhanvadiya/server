@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const ObjectId = mongoose.Types.ObjectId
 const sellStock = mongoose.model("sellStock");
 const stockModal = mongoose.model("stock");
 
@@ -198,6 +198,7 @@ exports.update_sell_stock_data = async (req, res) => {
             res.status(200).send({ updated: false, message: "sell stock id not found!" });
         }
     } catch (err) {
+        console.log(err);
         res.send(err);
     }
 };
