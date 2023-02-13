@@ -93,9 +93,9 @@ exports.getSellStockListName = async (req, res) => {
 
 exports.getSellStockStockNo = async (req, res) => {
     try {
-        const data = await sellStock.find({});
+        const data = await sellStock.find({ "stock.stockNo": req.params.stockno });
         let datalist = {};
-        data.map(item => {
+        await data.map(item => {
             datalist = item.stock.find(prod => Number(prod.stockNo) === Number(req.params.stockno))
         });
         if (datalist) {
