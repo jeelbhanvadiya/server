@@ -55,6 +55,16 @@ exports.getServicesStockNo = async (req, res) => {
     }
 };
 
+exports.get_service_by_serviceMan_id = async (req, res) => {
+    try {
+        const { serviceManId } = req.body
+        const SellStock = await Services.find({ "services.serviceManId": ObjectId(serviceManId) });
+        res.status(200).send(SellStock);
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
+    }
+};
+
 exports.updateService = async (req, res) => {
     try {
         const data = req.body;
