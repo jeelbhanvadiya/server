@@ -22,6 +22,8 @@ router.post("/create", controller.createServices);
 
 router.get("/get", controller.getServiceData);
 
+router.post("/get_service_man_id", controller.get_service_by_serviceMan_id);
+
 router.get("/get/:id", controller.getServicesStockNo);
 
 router.put("/update", controller.updateService);

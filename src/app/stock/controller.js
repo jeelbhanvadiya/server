@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const commanFun = require('../../commanFun/index')
 const Stock = mongoose.model("stock");
+const sellStock = require('../sellStockData/model');
 const acData = mongoose.model("acData");
+const Services = mongoose.model("services");
 const ObjectId = mongoose.Types.ObjectId
 function getNumber(num, targetLength) {
     return num.toString().padStart(targetLength, 0);
@@ -116,8 +118,16 @@ exports.getStockNoWise = async (req, res) => {
 
 exports.updateStock = async (req, res) => {
     try {
+        let editedStock
         if (req.params.id) {
-            const editedStock = await Stock.findByIdAndUpdate(req.params.id, req.body);
+            if (req.body?.isDeleted == false && req.body.sell == false) {
+                req.body.crmStatus = false
+                editedStock = await Stock.findByIdAndUpdate(req.params.id, req.body);
+                await sellStock.deleteMany({ stock: { $elemMatch: { stockNo: editedStock?.stockNo, } } })
+                await Services.deleteMany({ stockNo: editedStock?.stockNo })
+            } else {
+                editedStock = await Stock.findByIdAndUpdate(req.params.id, req.body);
+            }
             if (editedStock && editedStock._id) {
                 res.status(200).send({ success: true, editedStock });
             } else {

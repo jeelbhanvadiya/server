@@ -93,13 +93,13 @@ exports.getSellStockListName = async (req, res) => {
 
 exports.getSellStockStockNo = async (req, res) => {
     try {
-        const data = await sellStock.find({ "stock.stockNo": req.params.stockno });
-        let datalist = {};
-        await data.map(item => {
-            datalist = item.stock.find(prod => Number(prod.stockNo) === Number(req.params.stockno))
-        });
-        if (datalist) {
-            res.status(200).send(datalist);
+        const data = await sellStock.findOne({ "stock.stockNo": req.params.stockno });
+        // let datalist = {};
+        // await data.map(item => {
+        //     datalist = item.stock.find(prod => Number(prod.stockNo) === Number(req.params.stockno))
+        // });
+        if (data) {
+            res.status(200).send(data);
         } else {
             res.status(200).send("Not Found any data");
         }
@@ -107,7 +107,6 @@ exports.getSellStockStockNo = async (req, res) => {
         res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
     }
 };
-
 
 exports.searchingSellStock = async (req, res) => {
     try {
