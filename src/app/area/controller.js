@@ -38,7 +38,7 @@ exports.get_area = async (req, res) => {
             Area.countDocuments(match)
         ])
         return res.status(400).send({
-            message: "Area has been successfully added!", area_data: response, state: {
+            message: "Area has been successfully retrieved!", area_data: response, state: {
                 page: page,
                 limit: limit,
                 page_limit: Math.ceil(count / (req.body?.limit)) || 1,

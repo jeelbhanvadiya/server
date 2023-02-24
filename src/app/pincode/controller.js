@@ -34,7 +34,7 @@ exports.get_pincode = async (req, res) => {
             Pincode.countDocuments({ areaId: ObjectId(areaId) })
         ])
         return res.status(400).send({
-            message: "Pincode has been successfully added!", pincode_data: response, state: {
+            message: "Pincode has been successfully retrieved!", pincode_data: response, state: {
                 page: page,
                 limit: limit,
                 page_limit: Math.ceil(count / (req.body?.limit)) || 1,
