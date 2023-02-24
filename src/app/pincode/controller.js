@@ -22,7 +22,7 @@ exports.add_pincode = async (req, res) => {
 
 exports.get_pincode = async (req, res) => {
     try {
-        let { page, limit, areaId } = req.body, match = {}
+        let { page, limit, areaId, searchPincode } = req.body, match = {}
         if (areaId)
             match.areaId = ObjectId(areaId)
         if (searchPincode && searchPincode != "") {
