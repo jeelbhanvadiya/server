@@ -58,7 +58,36 @@ exports.getServicesStockNo = async (req, res) => {
 exports.get_service_by_serviceMan_id = async (req, res) => {
     try {
         const { serviceManId } = req.body
-        const SellStock = await Services.find({ "services.serviceManId": ObjectId(serviceManId) });
+        const SellStock = await Services.aggregate([
+            { $match: { "services.serviceManId": ObjectId(serviceManId) } },
+            // {
+            //     $unwind: {
+            //         path: "$services",
+            //         // preserveNullAndEmptyArrays: true
+            //     }
+            // },
+            // {
+            //     $lookup: {
+            //         from: "stocks",
+            //         let: { corporateInvoiceId: '$corporateInvoiceId' },
+            //         pipeline: [
+            //             {
+            //                 $match: {
+            //                     $expr: {
+            //                         $and: [
+            //                             { $eq: ['$_id', '$$corporateInvoiceId'] },
+            //                             { $eq: ['$isActive', true] },
+            //                             { $eq: ['$isBlock', false] },
+            //                         ],
+            //                     },
+            //                 }
+            //             },
+            //             { $project: { id: 1 } }
+            //         ],
+            //         as: "corporate_invoice"
+            //     }
+            // },
+        ]);
         res.status(200).send(SellStock);
     } catch (err) {
         res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });

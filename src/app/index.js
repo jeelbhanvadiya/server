@@ -12,12 +12,16 @@ const NotificationRouter = require("./notifications/router");
 const attendance = require("./attendances/router");
 const rawMaterialTypesRouter = require("./rawMatirialList/router");
 const extraServicesRouter = require("./extraServices/router");
+const areaRouter = require("./area/router");
+const pincodeRouter = require("./pincode/router");
 
 const validateToken = require("../middlewares/validateToken");
 
 module.exports = (app) => {
     app.use("/home_page", homeRouter);
     app.use("/users", usersRouter);
+    app.use("/area", validateToken, areaRouter);
+    app.use("/pincode", validateToken, pincodeRouter);
     app.use("/stock", validateToken, stockRouter);
     app.use("/sell-stock", validateToken, sellStockRouter);
     app.use("/company", validateToken, companyRouter);

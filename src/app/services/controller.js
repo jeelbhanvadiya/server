@@ -49,7 +49,53 @@ exports.getServiceData = async (req, res) => {
 exports.get_service_by_serviceMan_id = async (req, res) => {
     try {
         const { serviceManId } = req.body
-        const SellStock = await Services.find({ "services.serviceManId": ObjectId(serviceManId) });
+        const SellStock = await Services.aggregate([
+            { $match: { "services.serviceManId": ObjectId(serviceManId) }, },
+            //  {
+            //     $unwind: {
+            //         path: "$services",
+            //         // preserveNullAndEmptyArrays: true
+            //     }
+            // },
+            // {
+            //     $lookup: {
+            //         from: "stocks",
+            //         let: { stockNo: { $toString: '$stockNo' } },
+            //         pipeline: [
+            //             {
+            //                 $match: {
+            //                     $expr: {
+            //                         $and: [
+            //                             { $eq: ['$stockNo', '$$stockNo'] },
+            //                         ],
+            //                     },
+            //                 }
+            //             },
+            //         ],
+            //         as: "stock"
+            //     }
+            // },
+            {
+                $lookup: {
+                    from: "sellstocks",
+                    let: { stockNo: { $toString: '$stockNo' } },
+                    // let: { stockNo: "202100001" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $in: ['$$stockNo', '$stock.stockNo'] },
+                                    ],
+                                },
+                            }
+                        },
+                    ],
+                    as: "sell_stock"
+                }
+            },
+        ]);
+
         res.status(200).send(SellStock);
     } catch (err) {
         res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
