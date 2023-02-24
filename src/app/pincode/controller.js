@@ -22,11 +22,20 @@ exports.add_pincode = async (req, res) => {
 
 exports.get_pincode = async (req, res) => {
     try {
-        let { page, limit, areaId } = req.body
-
+        let { page, limit, areaId } = req.body, match = {}
+        if (areaId)
+            match.areaId = ObjectId(areaId)
+        if (searchPincode && searchPincode != "") {
+            let nameArray = []
+            searchPincode = searchPincode.split(" ")
+            await searchPincode.forEach(data => {
+                nameArray.push({ "pincode": { $regex: data, $options: 'si' } })
+            })
+            match.$or = [{ $and: nameArray }];
+        };
         let [response, count] = await Promise.all([
             Pincode.aggregate([
-                { $match: { areaId: ObjectId(areaId) } },
+                { $match: match },
                 { $sort: { createdAt: -1 } },
                 { $skip: (((page - 1) * limit)) },
                 { $limit: limit },
