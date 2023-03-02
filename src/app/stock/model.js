@@ -13,6 +13,7 @@ const stockSchema = new Schema(
         unitIndoorNo: { type: String, required: false },
         unitOutdoorNo: { type: String, required: false },
         clientPhoneNo: { type: Number, default: null },
+        oldHistory: { type: [{ type: String }], default: [] },
         invoiceNo: { type: String },
         invoiceDate: { type: Date },
         acType: { type: String },

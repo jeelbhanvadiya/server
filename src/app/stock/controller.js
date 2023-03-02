@@ -52,16 +52,33 @@ exports.getStock = async (req, res) => {
 
 exports.migration = async (req, res) => {
     try {
+        function searchStringInArray(str, strArray) {
+            for (var j = 0; j < strArray.length; j++) {
+                if (strArray[j].match(str)) return j;
+            }
+            return -1;
+        }
+
         let { stockIds, stockYear } = req.body
-        let stockNo = new RegExp(`^${stockYear}`, "ig")
+        let stockNo = new RegExp(`^${stockYear}`, "ig"), update_JSON = {}
         for (let i = 0; i < stockIds?.length; i++) {
             let isAlreadyAssign = await Stock.findOne({ _id: ObjectId(stockIds[i]), stockNo: { $regex: stockNo } })
             if (isAlreadyAssign)
                 return res.status(200).send({ stockData: {}, message: "You've request stock already exist same year." });
         }
         for (let i = 0; i < stockIds?.length; i++) {
-            let count = await Stock.countDocuments({ stockNo: { $regex: stockNo } });
-            let stockData = await Stock.findOneAndUpdate({ _id: ObjectId(stockIds[i]) }, { stockNo: `${stockYear}${getNumber(count + 1, 5)}` }, { new: true })
+            let [count, stockData] = await Promise.all([
+                Stock.countDocuments({ stockNo: { $regex: stockNo } }),
+                Stock.findOne({ _id: ObjectId(stockIds[i]), }),
+            ])
+            if (parseInt(stockData?.stockNo?.substring(0, 4)) < parseInt(stockYear)) {
+                update_JSON.oldHistory = [...(stockData?.oldHistory || []), stockData?.stockNo, `${stockYear}${getNumber(count + 1, 5)}`]
+                update_JSON.stockNo = `${stockYear}${getNumber(count + 1, 5)}`
+            } else {
+                let index = searchStringInArray(stockYear, stockData?.oldHistory)
+                update_JSON.stockNo = `${stockData?.oldHistory[index]}`
+            }
+            stockData = await Stock.findOneAndUpdate({ _id: ObjectId(stockIds[i]) }, update_JSON, { new: true })
             if (!stockData)
                 return res.status(200).send({ stockData, message: "You've request stock id not found." });
         }
@@ -107,7 +124,6 @@ exports.getDataByCapacityTrue = async (req, res) => {
 };
 
 exports.getStockNoWise = async (req, res) => {
-    console.log(req.params.stockno)
     try {
         const stock = await Stock.findOne({ stockNo: req.params.stockno })
         res.status(200).send(stock);
