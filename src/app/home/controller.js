@@ -8,7 +8,27 @@ const acData = require('../accData/model')
 
 exports.homePage = async (req, res) => {
     try {
-        const serviceData = await Services.find({});
+        const serviceData = await Services.aggregate([
+            {
+                $lookup: {
+                    from: "sellstocks",
+                    let: { stockNo: { $toString: '$stockNo' } },
+                    // let: { stockNo: "202100001" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $in: ['$$stockNo', '$stock.stockNo'] },
+                                    ],
+                                },
+                            }
+                        },
+                    ],
+                    as: "sell_stock"
+                }
+            },
+        ]);
         const rawMaterialData = await rawMaterial.find({});
         const attendanceData = await attendance.find({});
         const ac_data = await acData.find({});
