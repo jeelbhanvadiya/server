@@ -24,10 +24,17 @@ exports.homePage = async (req, res) => {
                                 },
                             }
                         },
+                        {
+                            $sort: { _id: -1 }
+                        },
+                        {
+                            $limit: 1
+                        }
                     ],
                     as: "sell_stock"
                 }
             },
+
         ]);
         const rawMaterialData = await rawMaterial.find({});
         const attendanceData = await attendance.find({});
