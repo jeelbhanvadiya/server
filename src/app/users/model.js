@@ -17,6 +17,7 @@ const userSchema = new Schema({
     otpExpireTime: { type: Date, default: null },
     GSTNo: { type: String, required: false },
     profileUrl: { type: String, required: false },
+    deviceToken: { type: [{ type: String }], default: [] },
     address: {
         houseNo: String,
         streetName: String,

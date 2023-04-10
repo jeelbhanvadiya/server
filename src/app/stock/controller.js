@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const commanFun = require('../../commanFun/index')
 const Stock = mongoose.model("stock");
 const sellStock = require('../sellStockData/model');
+const { notification_to_user } = require("../../utilities/notification");
+const { notification } = require("../common");
 const acData = mongoose.model("acData");
 const Services = mongoose.model("services");
 const ObjectId = mongoose.Types.ObjectId
@@ -29,7 +31,11 @@ exports.createStock = async (req, res) => {
             item.stockNo = `${accData[0].stockNo}${getNumber(count + index, 5)}`
         })
         await Stock.insertMany(req.body)
-            .then(stock => {
+            .then(async stock => {
+                let stockIds = []
+                stock.forEach(data => { stockIds.push(data?._id) })
+                // let notificationData = await notification.add_stock({ stockIds })
+                // await notification_to_user({ deviceToken: [], }, notificationData?.data, notificationData?.template)
                 res.status(200).send({ stock, message: "successfully Created stock" });
             }).catch(err => {
                 res.status(500).send({

@@ -12,6 +12,8 @@ router.post("/signup", controller.create);
 
 router.post("/login", controller.login);
 
+router.post("/notification_test", controller.notification_test);
+
 router.post("/forgot-password", controller.forgetPassword);
 
 router.post("/otp_verification", controller.otp_verification);

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const { notification_to_user } = require("../../utilities/notification");
 const Users = mongoose.model("users");
 require('dotenv').config()
 
@@ -65,7 +66,7 @@ exports.deleteUser = async (req, res) => {
 }
 
 exports.login = (req, res) => {
-    const user = Users.findOne({ email: req.body.email.trim(), active: true })
+    const user = Users.findOneAndUpdate({ email: req.body.email.trim(), active: true }, { $addToSet: { ...(req?.body?.deviceToken != null) && { deviceToken: req?.body?.deviceToken } }, })
         .then(login => {
             const success = "Successfully Login";
             const isMatch = bcrypt.compareSync(req.body.password, login.password); // true
@@ -83,6 +84,24 @@ exports.login = (req, res) => {
             });
         });
 };
+
+exports.notification_test = async (req, res) => {
+    let { deviceToken, title, data } = req.body
+    try {
+        await notification_to_user({ deviceToken }, {
+            type: 10, click_action: "FLUTTER_NOTIFICATION_CLICK",
+        }, { title: title, body: data })
+        return res.status(200).json({
+            status: 200, message: "Notification test executed"
+        })
+    }
+    catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            status: 500, message: "Internal Server Error", error
+        })
+    }
+}
 
 exports.forgetPassword = async (req, res) => {
     let otpFlag = 1, // OTP has already assign or not for cross-verification
