@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.post("/create", controller.createStock);
 
+router.post("/get", controller.stockPaginationAPI);
+
 router.get("/get", controller.getStock);
 
 router.post("/filter", controller.filterStockData);

@@ -109,6 +109,58 @@ exports.filterBySellData = async (req, res) => {
     }
 };
 
+exports.stockPaginationAPI = async (req, res) => {
+    try {
+        let { page, limit, isSell, isDeleted, isAscending, searchingWord, searchKey } = req.body
+        let match = { sell: false, isDeleted: false }, sort = { _id: 1 }, skip = ((parseInt(page) - 1) * parseInt(limit)),
+            searchingKey = ['stockNo', 'weight', 'indoorSrNo', 'outdoorSrNo', 'unitIndoorNo', 'unitOutdoorNo']
+        limit = parseInt(limit)
+        if (searchingKey.indexOf(searchKey) == -1 && searchKey)
+            return res.status(400).json({ status: 400, message: "Invalid search key", validKeys: searchingKey })
+        if (isSell)
+            match.sell = isSell
+        if (isDeleted) {
+            match.isDeleted = isDeleted
+            delete match.sell
+        }
+        if (searchingWord != "" && searchingWord) {
+            let searchArray = []
+            searchingWord = searchingWord.split(" ")
+            await searchingWord.forEach(data => {
+                searchArray.push({ [`${searchKey}`]: { $regex: data, $options: 'si' } })
+            })
+            match.$or = [{ $and: searchArray }];
+        }
+        if (isAscending) {
+            sort = { _id: -1 }
+        }
+        console.log(match);
+        let [response, count] = await Promise.all([
+            Stock.aggregate([
+                { $match: match },
+                { $sort: sort },
+                { $skip: skip },
+                { $limit: limit },
+            ]),
+            Stock.countDocuments(match)
+        ])
+        return res.status(200).json({
+            message: "stock successfully retrieved!",
+            data: {
+                stock_data: response,
+                state: {
+                    page,
+                    limit,
+                    page_limit: Math.ceil(count / limit), data_count: count
+                }
+            }
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
+    }
+};
+
 exports.getDataByCapacity = async (req, res) => {
     try {
         let keyName = Object.keys(req.query)[0]

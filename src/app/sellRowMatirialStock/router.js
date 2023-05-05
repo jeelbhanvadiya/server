@@ -1,13 +1,15 @@
-require( "./model" );
-const express = require( "express" );
+require("./model");
+const express = require("express");
 
-const controller = require( "./controller" );
+const controller = require("./controller");
 
-const router = express.Router( );
+const router = express.Router();
 
-router.post( "/create", controller.createData );
+router.post("/create", controller.createData);
 
 router.post("/get", controller.getSellRawMatirialStock);
+
+router.get("/count", controller.countSellRawMaterialStock);
 
 router.put("/update/:id", controller.updateData);
 
