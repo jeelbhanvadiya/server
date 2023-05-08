@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const { notification_to_user } = require("../../utilities/notification");
-const apiResponse = require("../../common");
 const Users = mongoose.model("users");
 require('dotenv').config()
 
@@ -75,9 +74,9 @@ exports.login = (req, res) => {
                 let token = jwt.sign({ _id: login._id, email: req.body.email }, "superSuperSecret", {
                     expiresIn: '9999 years'
                 });
-                res.status(200).json(new apiResponse(200, success, { users: true, token: token, login: login, }, {}));
+                res.status(200).send({ users: true, token: token, login: login, success: success });
             } else {
-                res.status(400).json(new apiResponse(400, "Password is not match", {}, {}));
+                res.status(500).send({ message: "Password is not match" });
             }
         }).catch(err => {
             res.send({
