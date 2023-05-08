@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { apiResponse } = require("../../common");
+const { responseMessage } = require("../../utilities/responseMessage");
 const rawMaterial = mongoose.model("rawMaterial");
 
 exports.createMaterialData = async (req, res) => {
@@ -40,7 +42,7 @@ exports.countRawMaterialData = async (req, res) => {
     try {
         let query = {};
         const data = await rawMaterial.countDocuments(query);
-        res.status(200).json({ message: "Raw material data successfully retrieved!", data });
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('raw material'), data, {}));
     } catch (err) {
         res.status(500).send({ message: err.message || "Some error occurred while finding data." });
     }

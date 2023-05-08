@@ -3,7 +3,8 @@ const commanFun = require('../../commanFun/index')
 const Stock = mongoose.model("stock");
 const sellStock = require('../sellStockData/model');
 const { notification_to_user } = require("../../utilities/notification");
-const { notification } = require("../common");
+const { apiResponse } = require("../../common");
+const { responseMessage } = require("../../utilities/responseMessage");
 const acData = mongoose.model("acData");
 const Services = mongoose.model("services");
 const ObjectId = mongoose.Types.ObjectId
@@ -34,7 +35,7 @@ exports.createStock = async (req, res) => {
             .then(async stock => {
                 let stockIds = []
                 stock.forEach(data => { stockIds.push(data?._id) })
-                // let notificationData = await notification.add_stock({ stockIds })
+                let notificationData = await notification.add_stock({ stockIds })
                 // await notification_to_user({ deviceToken: [], }, notificationData?.data, notificationData?.template)
                 res.status(200).send({ stock, message: "successfully Created stock" });
             }).catch(err => {
@@ -111,7 +112,7 @@ exports.filterBySellData = async (req, res) => {
 
 exports.stockPaginationAPI = async (req, res) => {
     try {
-        let { page, limit, isSell, isDeleted, isAscending, searchingWord, searchKey } = req.body
+        let { page, limit, isSell, isDeleted, isAscending, searchingWord, searchKey, year } = req.body
         let match = { sell: false, isDeleted: false }, sort = { _id: 1 }, skip = ((parseInt(page) - 1) * parseInt(limit)),
             searchingKey = ['stockNo', 'weight', 'indoorSrNo', 'outdoorSrNo', 'unitIndoorNo', 'unitOutdoorNo']
         limit = parseInt(limit)
@@ -122,6 +123,10 @@ exports.stockPaginationAPI = async (req, res) => {
         if (isDeleted) {
             match.isDeleted = isDeleted
             delete match.sell
+        }
+        if (year) {
+            match.stockNo = { $regex: new RegExp(`^${year}`, "ig"), }
+
         }
         if (searchingWord != "" && searchingWord) {
             let searchArray = []
@@ -134,7 +139,6 @@ exports.stockPaginationAPI = async (req, res) => {
         if (isAscending) {
             sort = { _id: -1 }
         }
-        console.log(match);
         let [response, count] = await Promise.all([
             Stock.aggregate([
                 { $match: match },
@@ -144,17 +148,14 @@ exports.stockPaginationAPI = async (req, res) => {
             ]),
             Stock.countDocuments(match)
         ])
-        return res.status(200).json({
-            message: "stock successfully retrieved!",
-            data: {
-                stock_data: response,
-                state: {
-                    page,
-                    limit,
-                    page_limit: Math.ceil(count / limit), data_count: count
-                }
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('stock'), {
+            stock_data: response,
+            state: {
+                page,
+                limit,
+                page_limit: Math.ceil(count / limit), data_count: count
             }
-        })
+        }, {}));
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });

@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { responseMessage } = require("../../utilities/responseMessage");
+const { apiResponse } = require("../../common");
 const sellRawMatirialStock = mongoose.model("sellRawMatirialStock");
 const rawMaterial = mongoose.model("rawMaterial");
 
@@ -34,7 +36,7 @@ exports.countSellRawMaterialStock = async (req, res) => {
     try {
         let query = {};
         const data = await sellRawMatirialStock.countDocuments(query);
-        res.status(200).json({ message: "Sell raw material data successfully retrieved!", data });
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('sell raw material'), data, {}));
     } catch (err) {
         res.status(500).send({ message: err.message || "Some error occurred while finding data." });
     }
