@@ -158,7 +158,7 @@ exports.stockPaginationAPI = async (req, res) => {
         }, {}));
     } catch (err) {
         console.log(err);
-        res.status(500).send({ message: err.message || "Some error occurred while retrieving login." });
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
     }
 };
 

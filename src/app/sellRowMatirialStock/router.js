@@ -9,6 +9,8 @@ router.post("/create", controller.createData);
 
 router.post("/get", controller.getSellRawMatirialStock);
 
+router.post("/pagination", controller.sellRawMaterialPaginationAPI);
+
 router.get("/count", controller.countSellRawMaterialStock);
 
 router.put("/update/:id", controller.updateData);

@@ -10,6 +10,8 @@ router.post("/create", controller.createMaterialData);
 
 router.post("/get", controller.getRawMaterialData);
 
+router.post("/pagination", controller.rawMaterialPaginationAPI);
+
 router.get("/count", controller.countRawMaterialData);
 
 router.put("/update/:id", controller.updateRawMaterialData);

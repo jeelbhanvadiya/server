@@ -38,7 +38,36 @@ exports.countSellRawMaterialStock = async (req, res) => {
         const data = await sellRawMatirialStock.countDocuments(query);
         res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('sell raw material'), data, {}));
     } catch (err) {
-        res.status(500).send({ message: err.message || "Some error occurred while finding data." });
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
+    }
+};
+
+exports.sellRawMaterialPaginationAPI = async (req, res) => {
+    try {
+        let { page, limit, } = req.body
+        let match = {}, sort = { _id: -1 }, skip = ((parseInt(page) - 1) * parseInt(limit))
+        limit = parseInt(limit)
+
+        let [response, count] = await Promise.all([
+            sellRawMatirialStock.aggregate([
+                { $match: match },
+                { $sort: sort },
+                { $skip: skip },
+                { $limit: limit },
+            ]),
+            sellRawMatirialStock.countDocuments(match)
+        ])
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('sell raw material'), {
+            sell_raw_material_data: response,
+            state: {
+                page,
+                limit,
+                page_limit: Math.ceil(count / limit), data_count: count
+            }
+        }, {}));
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
     }
 };
 
