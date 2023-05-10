@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId
 const Services = mongoose.model("services");
 const Users = mongoose.model("users");
-const commanFun = require('../../commanFun/index')
+const commanFun = require('../../commanFun/index');
+const { apiResponse } = require("../../common");
+const { responseMessage } = require("../../utilities/responseMessage");
 
 exports.createServices = async (req, res) => {
     try {
@@ -176,6 +178,202 @@ exports.updateService = async (req, res) => {
         res.status(200).send({ update: false, message: "Something went wrong" });
     } catch (err) {
         res.status(404).send({ success: false, message: err || "Something went wrong" });
+    }
+};
+
+exports.countService = async (req, res) => {
+    try {
+        let response = await Services.aggregate([
+            { $unwind: { path: "$services" } },
+            {
+                $facet: {
+                    pendingService: [
+                        { $match: { "services.serviceCompleteStatus": false } },
+                        { $group: { _id: null, total: { $sum: 1 } } }
+                    ],
+                    completedService: [
+                        { $match: { "services.serviceCompleteStatus": true } },
+                        { $group: { _id: null, total: { $sum: 1 } } }
+                    ],
+                    totalService: [
+                        { $group: { _id: null, total: { $sum: 1 } } }
+                    ]
+                }
+            }
+        ])
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('service count'), {
+            pendingService: response[0]?.pendingService[0]?.total || 0,
+            completedService: response[0]?.completedService[0]?.total || 0,
+            totalService: response[0]?.totalService[0]?.total || 0,
+        }, {}));
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
+    }
+};
+
+exports.pendingServicePagination = async (req, res) => {
+    try {
+        let { page, limit, } = req.body
+        let sort = { _id: -1 }, skip = ((parseInt(page) - 1) * parseInt(limit))
+        let [response, count] = await Promise.all([
+            Services.aggregate([
+                { $sort: sort },
+                { $unwind: { path: "$services" } },
+                { $match: { "services.serviceCompleteStatus": false } },
+                { $skip: skip },
+                { $limit: limit },
+                {
+                    $lookup: {
+                        from: "stocks",
+                        let: { stockNo: { $toString: '$stockNo' } },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$stockNo', '$$stockNo'] },
+                                            { $eq: ['$isDeleted', false] },
+                                        ],
+                                    },
+                                }
+                            },
+                        ],
+                        as: "stock"
+                    }
+                },
+            ]), Services.aggregate([
+                { $unwind: { path: "$services" } },
+                { $match: { "services.serviceCompleteStatus": false } },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: 1 },
+                    }
+                },
+            ])
+        ])
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('pending service'), {
+            service_data: response,
+            state: {
+                page,
+                limit,
+                page_limit: Math.ceil((count[0]?.total || 0) / limit), data_count: (count[0]?.total || 0)
+            }
+        }, {}));
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
+    }
+};
+
+exports.completedServicePagination = async (req, res) => {
+    try {
+        let { page, limit, } = req.body
+        let sort = { _id: -1 }, skip = ((parseInt(page) - 1) * parseInt(limit))
+        let [response, count] = await Promise.all([
+            Services.aggregate([
+                { $sort: sort },
+                { $unwind: { path: "$services" } },
+                { $match: { "services.serviceCompleteStatus": true } },
+                { $skip: skip },
+                { $limit: limit },
+                {
+                    $lookup: {
+                        from: "stocks",
+                        let: { stockNo: { $toString: '$stockNo' } },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$stockNo', '$$stockNo'] },
+                                            { $eq: ['$isDeleted', false] },
+                                        ],
+                                    },
+                                }
+                            },
+                        ],
+                        as: "stock"
+                    }
+                },
+            ]),
+            Services.aggregate([
+                { $unwind: { path: "$services" } },
+                { $match: { "services.serviceCompleteStatus": true } },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: 1 },
+                    }
+                },
+            ])
+        ])
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('completed service'), {
+            service_data: response,
+            state: {
+                page,
+                limit,
+                page_limit: Math.ceil((count[0]?.total || 0) / limit), data_count: (count[0]?.total || 0)
+            }
+        }, {}));
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
+    }
+};
+
+exports.totalServicePagination = async (req, res) => {
+    try {
+        let { page, limit, } = req.body
+        let sort = { _id: -1 }, skip = ((parseInt(page) - 1) * parseInt(limit))
+        let [response, count] = await Promise.all([
+            Services.aggregate([
+                { $sort: sort },
+                { $unwind: { path: "$services" } },
+                { $skip: skip },
+                { $limit: limit },
+                {
+                    $lookup: {
+                        from: "stocks",
+                        let: { stockNo: { $toString: '$stockNo' } },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$stockNo', '$$stockNo'] },
+                                            { $eq: ['$isDeleted', false] },
+                                        ],
+                                    },
+                                }
+                            },
+                        ],
+                        as: "stock"
+                    }
+                },
+            ]),
+            Services.aggregate([
+                { $unwind: { path: "$services" } },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: 1 },
+                    }
+                },
+            ])
+        ])
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('total service'), {
+            service_data: response,
+            state: {
+                page,
+                limit,
+                page_limit: Math.ceil((count[0]?.total || 0) / limit), data_count: (count[0]?.total || 0)
+            }
+        }, {}));
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
     }
 };
 

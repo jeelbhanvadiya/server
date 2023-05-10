@@ -22,6 +22,14 @@ router.post("/create", controller.createServices);
 
 router.get("/get", controller.getServiceData);
 
+router.get("/count", controller.countService);
+
+router.post("/pending_service", controller.pendingServicePagination);
+
+router.post("/completed_service", controller.completedServicePagination);
+
+router.post("/total_service", controller.totalServicePagination);
+
 router.post("/get_service_man_id", controller.get_service_by_serviceMan_id);
 
 router.get("/get/:id", controller.getServicesStockNo);
