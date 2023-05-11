@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId
 const Services = mongoose.model("services");
+const ExtraServices = require('../extraServices/model');
 const Users = mongoose.model("users");
 const commanFun = require('../../commanFun/index');
 const { apiResponse } = require("../../common");
@@ -183,28 +184,51 @@ exports.updateService = async (req, res) => {
 
 exports.countService = async (req, res) => {
     try {
-        let response = await Services.aggregate([
-            { $unwind: { path: "$services" } },
-            {
-                $facet: {
-                    pendingService: [
-                        { $match: { "services.serviceCompleteStatus": false } },
-                        { $group: { _id: null, total: { $sum: 1 } } }
-                    ],
-                    completedService: [
-                        { $match: { "services.serviceCompleteStatus": true } },
-                        { $group: { _id: null, total: { $sum: 1 } } }
-                    ],
-                    totalService: [
-                        { $group: { _id: null, total: { $sum: 1 } } }
-                    ]
+        let [serviceData, extraServiceData] = await Promise.all([
+            Services.aggregate([
+                { $unwind: { path: "$services" } },
+                {
+                    $facet: {
+                        pendingService: [
+                            { $match: { "services.serviceCompleteStatus": false } },
+                            { $group: { _id: null, total: { $sum: 1 } } }
+                        ],
+                        completedService: [
+                            { $match: { "services.serviceCompleteStatus": true } },
+                            { $group: { _id: null, total: { $sum: 1 } } }
+                        ],
+                        totalService: [
+                            { $group: { _id: null, total: { $sum: 1 } } }
+                        ]
+                    }
                 }
-            }
+            ]),
+            ExtraServices.aggregate([
+                { $unwind: { path: "$services" } },
+                {
+                    $facet: {
+                        pendingService: [
+                            { $match: { "services.serviceCompleteStatus": false } },
+                            { $group: { _id: null, total: { $sum: 1 } } }
+                        ],
+                        completedService: [
+                            { $match: { "services.serviceCompleteStatus": true } },
+                            { $group: { _id: null, total: { $sum: 1 } } }
+                        ],
+                        totalService: [
+                            { $group: { _id: null, total: { $sum: 1 } } }
+                        ]
+                    }
+                }
+            ])
         ])
         res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('service count'), {
-            pendingService: response[0]?.pendingService[0]?.total || 0,
-            completedService: response[0]?.completedService[0]?.total || 0,
-            totalService: response[0]?.totalService[0]?.total || 0,
+            pendingService: serviceData[0]?.pendingService[0]?.total || 0,
+            completedService: serviceData[0]?.completedService[0]?.total || 0,
+            totalService: serviceData[0]?.totalService[0]?.total || 0,
+            pendingExtraService: extraServiceData[0]?.pendingService[0]?.total || 0,
+            completedExtraService: extraServiceData[0]?.completedService[0]?.total || 0,
+            totalExtraService: extraServiceData[0]?.totalService[0]?.total || 0,
         }, {}));
     } catch (err) {
         console.log(err)
