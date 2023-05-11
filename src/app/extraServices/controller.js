@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId
 const Services = mongoose.model("extraservices");
 const Users = mongoose.model("users");
-const commanFun = require('../../commanFun/index')
+const commanFun = require('../../commanFun/index');
+const { apiResponse } = require("../../common");
+const { responseMessage } = require("../../utilities/responseMessage");
 
 exports.createServices = async (req, res) => {
     try {
@@ -264,3 +266,168 @@ exports.serviceMainIdUpdate = async (req, res) => {
         res.status(422).send({ error: "Error in Updating ServiceMain Id" });
     }
 }
+
+exports.pendingExtraServicePagination = async (req, res) => {
+    try {
+        let { page, limit, } = req.body
+        let sort = { _id: -1 }, skip = ((parseInt(page) - 1) * parseInt(limit))
+        let [response, count] = await Promise.all([
+            Services.aggregate([
+                { $sort: sort },
+                { $unwind: { path: "$services" } },
+                { $match: { "services.serviceCompleteStatus": false } },
+                { $skip: skip },
+                { $limit: limit },
+                {
+                    $lookup: {
+                        from: "stocks",
+                        let: { stockNo: { $toString: '$stockNo' } },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$stockNo', '$$stockNo'] },
+                                            { $eq: ['$isDeleted', false] },
+                                        ],
+                                    },
+                                }
+                            },
+                        ],
+                        as: "stock"
+                    }
+                },
+            ]), Services.aggregate([
+                { $unwind: { path: "$services" } },
+                { $match: { "services.serviceCompleteStatus": false } },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: 1 },
+                    }
+                },
+            ])
+        ])
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('pending extra service'), {
+            extra_service_data: response,
+            state: {
+                page,
+                limit,
+                page_limit: Math.ceil((count[0]?.total || 0) / limit), data_count: (count[0]?.total || 0)
+            }
+        }, {}));
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
+    }
+};
+
+exports.completedExtraServicePagination = async (req, res) => {
+    try {
+        let { page, limit, } = req.body
+        let sort = { _id: -1 }, skip = ((parseInt(page) - 1) * parseInt(limit))
+        let [response, count] = await Promise.all([
+            Services.aggregate([
+                { $sort: sort },
+                { $unwind: { path: "$services" } },
+                { $match: { "services.serviceCompleteStatus": true } },
+                { $skip: skip },
+                { $limit: limit },
+                {
+                    $lookup: {
+                        from: "stocks",
+                        let: { stockNo: { $toString: '$stockNo' } },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$stockNo', '$$stockNo'] },
+                                            { $eq: ['$isDeleted', false] },
+                                        ],
+                                    },
+                                }
+                            },
+                        ],
+                        as: "stock"
+                    }
+                },
+            ]),
+            Services.aggregate([
+                { $unwind: { path: "$services" } },
+                { $match: { "services.serviceCompleteStatus": true } },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: 1 },
+                    }
+                },
+            ])
+        ])
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('completed extra service'), {
+            extra_service_data: response,
+            state: {
+                page,
+                limit,
+                page_limit: Math.ceil((count[0]?.total || 0) / limit), data_count: (count[0]?.total || 0)
+            }
+        }, {}));
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
+    }
+};
+
+exports.totalExtraServicePagination = async (req, res) => {
+    try {
+        let { page, limit, } = req.body
+        let sort = { _id: -1 }, skip = ((parseInt(page) - 1) * parseInt(limit))
+        let [response, count] = await Promise.all([
+            Services.aggregate([
+                { $sort: sort },
+                { $unwind: { path: "$services" } },
+                { $skip: skip },
+                { $limit: limit },
+                {
+                    $lookup: {
+                        from: "stocks",
+                        let: { stockNo: { $toString: '$stockNo' } },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$stockNo', '$$stockNo'] },
+                                            { $eq: ['$isDeleted', false] },
+                                        ],
+                                    },
+                                }
+                            },
+                        ],
+                        as: "stock"
+                    }
+                },
+            ]),
+            Services.aggregate([
+                { $unwind: { path: "$services" } },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: 1 },
+                    }
+                },
+            ])
+        ])
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('total extra service'), {
+            extra_service_data: response,
+            state: {
+                page,
+                limit,
+                page_limit: Math.ceil((count[0]?.total || 0) / limit), data_count: (count[0]?.total || 0)
+            }
+        }, {}));
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
+    }
+};
