@@ -326,3 +326,30 @@ exports.filterStockData = async (req, res) => {
         res.status(422).send({ error: "Error in getting course details" });
     }
 }
+
+exports.getLastStock = async (req, res) => {
+    try {
+        let { year, limit, page } = req.body
+        let match = {}, sort = { _id: 1 }, skip = ((parseInt(page) - 1) * parseInt(limit))
+        limit = parseInt(limit)
+        if (year) {
+            match.stockNo = { $regex: new RegExp(`^${year}`, "ig"), }
+
+        }
+        sort = { stockNo: -1 }
+        let [response] = await Promise.all([
+            Stock.aggregate([
+                { $match: match },
+                { $sort: sort },
+                { $skip: skip },
+                { $limit: limit },
+            ]),
+        ])
+        res.status(200).json(new apiResponse(200, responseMessage?.getDataSuccess('stock'), {
+            stock_data: response,
+        }, {}));
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(new apiResponse(500, responseMessage?.internalServerError, {}, {}));
+    }
+};

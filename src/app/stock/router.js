@@ -18,6 +18,8 @@ router.post("/migration", controller.migration);
 
 router.post("/filterbysell", controller.filterBySellData);
 
+router.post("/last_stock", controller.getLastStock);
+
 router.get("/getstockbyremaining/", controller.getDataByCapacity);
 
 router.get("/getstockbysell/", controller.getDataByCapacityTrue);
