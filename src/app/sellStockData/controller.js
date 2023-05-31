@@ -13,7 +13,7 @@ function getCurrentYear() {
 
 exports.createSellStock = async (req, res) => {
     try {
-        const { clientPhoneNo, stock } = req.body;
+        const { clientPhoneNo, stock, clientName } = req.body;
         const year = getCurrentYear();
         const data = await sellStock.aggregate([{ $count: "sellStock" }]);
         let count = 1;
@@ -31,7 +31,8 @@ exports.createSellStock = async (req, res) => {
                     return new Promise(async (resolve) => {
                         const update = await stockModal.updateOne({ stockNo: payload.stockNo }, {
                             sell: true,
-                            clientPhoneNo: clientPhoneNo
+                            clientPhoneNo: clientPhoneNo,
+                            clientName: clientName,
                         });
                         if (update && update.ok) {
                             return resolve({ success: true });
